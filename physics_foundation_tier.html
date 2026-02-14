@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQA Physics - Foundation Tier Diagnostic</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f7fafc;
+      color: #1a202c;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    #root {
+      min-height: 100vh;
+    }
+
+    .app-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
+
+    .welcome-card {
+      background: white;
+      border-radius: 16px;
+      padding: 48px 40px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .welcome-card h1 {
+      color: #1a365d;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card .subtitle {
+      color: #2b6cb0;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .welcome-card .description {
+      color: #4a5568;
+      font-size: 15px;
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .welcome-card .info-box {
+      background: #ebf8ff;
+      border-left: 4px solid #2b6cb0;
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .welcome-card .info-box p {
+      color: #2c5282;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .name-input:focus {
+      border-color: #2b6cb0;
+      box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 48px;
+      min-width: 44px;
+    }
+
+    .btn-primary {
+      background: #2b6cb0;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1a365d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26, 54, 93, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #edf2f7;
+      color: #1a365d;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-success {
+      background: #38a169;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #2f855a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
+    }
+
+    .btn-success:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .btn-danger {
+      background: #e53e3e;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c53030;
+    }
+
+    /* Quiz Screen */
+    .quiz-header {
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 20px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-info span {
+      font-size: 14px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2b6cb0, #38a169);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .question-meta {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .badge-topic {
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+
+    .badge-basic {
+      background: #f0fff4;
+      color: #38a169;
+    }
+
+    .badge-intermediate {
+      background: #fffaf0;
+      color: #d69e2e;
+    }
+
+    .question-number {
+      font-size: 14px;
+      color: #a0aec0;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a365d;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 52px;
+      color: #2d3748;
+      width: 100%;
+    }
+
+    .option-btn:hover {
+      border-color: #2b6cb0;
+      background: #ebf8ff;
+    }
+
+    .option-btn.selected {
+      border-color: #2b6cb0;
+      background: #ebf8ff;
+      color: #1a365d;
+      font-weight: 500;
+    }
+
+    .option-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      background: #edf2f7;
+      color: #4a5568;
+      font-weight: 700;
+      font-size: 14px;
+      margin-right: 14px;
+    }
+
+    .option-btn.selected .option-letter {
+      background: #2b6cb0;
+      color: white;
+    }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quiz-nav .btn {
+      min-width: 120px;
+    }
+
+    /* Question Grid */
+    .question-grid-toggle {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+      gap: 6px;
+      margin-bottom: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .grid-item {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid #e2e8f0;
+      background: white;
+      color: #a0aec0;
+      transition: all 0.15s;
+      min-height: 44px;
+    }
+
+    .grid-item:hover {
+      border-color: #2b6cb0;
+    }
+
+    .grid-item.answered {
+      background: #ebf8ff;
+      border-color: #2b6cb0;
+      color: #2b6cb0;
+    }
+
+    .grid-item.current {
+      background: #1a365d;
+      border-color: #1a365d;
+      color: white;
+    }
+
+    /* Results Screen */
+    .results-screen {
+      padding: 20px 0;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .results-header h1 {
+      color: #1a365d;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .score-display {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .score-big {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .score-label {
+      font-size: 16px;
+      color: #718096;
+      margin-bottom: 16px;
+    }
+
+    .score-bar-container {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.8s ease;
+    }
+
+    .score-assessment {
+      font-size: 15px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .topic-results {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .topic-results h2 {
+      color: #1a365d;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .topic-bar-item {
+      margin-bottom: 16px;
+    }
+
+    .topic-bar-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .topic-bar-name {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .topic-bar-score {
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .topic-bar-track {
+      width: 100%;
+      height: 12px;
+      background: #edf2f7;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .topic-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.6s ease;
+    }
+
+    .category-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .category-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .category-card .count {
+      font-size: 36px;
+      font-weight: 800;
+    }
+
+    .category-card .label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .results-actions .btn {
+      min-width: 200px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-urgent {
+      background: #fff5f5;
+      color: #e53e3e;
+    }
+
+    .status-review {
+      background: #fffff0;
+      color: #d69e2e;
+    }
+
+    .status-confident {
+      background: #f0fff4;
+      color: #38a169;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .app-container {
+        padding: 12px;
+      }
+
+      .welcome-card {
+        padding: 28px 20px;
+      }
+
+      .welcome-card h1 {
+        font-size: 22px;
+      }
+
+      .quiz-card {
+        padding: 20px;
+      }
+
+      .question-text {
+        font-size: 16px;
+      }
+
+      .category-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .score-big {
+        font-size: 42px;
+      }
+
+      .quiz-nav {
+        flex-wrap: wrap;
+      }
+
+      .quiz-nav .btn {
+        min-width: 100px;
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo, useCallback } = React;
+
+    // =========================================================================
+    // QUESTION BANK - 65 Real AQA A-Level Physics Questions
+    // =========================================================================
+    const questionBank = [
+      // ── KINEMATICS (6 Questions) ──────────────────────────────────────────
+      {
+        id: 1,
+        topic: "Kinematics",
+        difficulty: "Basic",
+        question: "A car accelerates uniformly from rest to 20 m/s in 8 seconds. What is the acceleration of the car?",
+        options: ["1.5 m/s\u00B2", "2.5 m/s\u00B2", "3.0 m/s\u00B2", "4.0 m/s\u00B2"],
+        correctAnswer: 1,
+        explanation: "Using a = (v - u) / t = (20 - 0) / 8 = 2.5 m/s\u00B2."
+      },
+      {
+        id: 2,
+        topic: "Kinematics",
+        difficulty: "Basic",
+        question: "On a displacement\u2013time graph, what does the gradient of the line represent?",
+        options: ["Acceleration", "Velocity", "Force", "Momentum"],
+        correctAnswer: 1,
+        explanation: "The gradient of a displacement\u2013time graph gives the velocity of the object."
+      },
+      {
+        id: 3,
+        topic: "Kinematics",
+        difficulty: "Intermediate",
+        question: "A ball is thrown vertically upward with an initial velocity of 15 m/s. Taking g = 9.8 m/s\u00B2, what is the maximum height reached?",
+        options: ["7.7 m", "9.2 m", "11.5 m", "15.0 m"],
+        correctAnswer: 2,
+        explanation: "Using v\u00B2 = u\u00B2 + 2as, at maximum height v = 0: 0 = 15\u00B2 - 2(9.8)s, so s = 225 / 19.6 = 11.5 m."
+      },
+      {
+        id: 4,
+        topic: "Kinematics",
+        difficulty: "Intermediate",
+        question: "A stone is dropped from a cliff and takes 3.0 s to reach the ground. What is the height of the cliff? (g = 9.8 m/s\u00B2)",
+        options: ["29.4 m", "44.1 m", "58.8 m", "88.2 m"],
+        correctAnswer: 1,
+        explanation: "Using s = ut + \u00BDat\u00B2 = 0 + \u00BD(9.8)(3.0)\u00B2 = 44.1 m."
+      },
+      {
+        id: 5,
+        topic: "Kinematics",
+        difficulty: "Intermediate",
+        question: "A projectile is launched horizontally at 12 m/s from a height of 45 m. How long does it take to hit the ground? (g = 10 m/s\u00B2)",
+        options: ["1.5 s", "2.0 s", "3.0 s", "4.5 s"],
+        correctAnswer: 2,
+        explanation: "Vertical motion: s = \u00BDgt\u00B2, so 45 = \u00BD(10)t\u00B2, giving t\u00B2 = 9, t = 3.0 s. Horizontal velocity does not affect fall time."
+      },
+      {
+        id: 6,
+        topic: "Kinematics",
+        difficulty: "Basic",
+        question: "The area under a velocity\u2013time graph represents which quantity?",
+        options: ["Acceleration", "Force", "Displacement", "Power"],
+        correctAnswer: 2,
+        explanation: "The area under a velocity\u2013time graph gives the displacement of the object."
+      },
+
+      // ── FORCES (6 Questions) ──────────────────────────────────────────────
+      {
+        id: 7,
+        topic: "Forces",
+        difficulty: "Basic",
+        question: "According to Newton\u2019s first law, an object will remain at rest or continue to move at constant velocity unless acted upon by what?",
+        options: ["A balanced force", "A resultant force", "Gravity", "Friction"],
+        correctAnswer: 1,
+        explanation: "Newton\u2019s first law states that an object remains at rest or in uniform motion unless acted upon by a resultant (net) force."
+      },
+      {
+        id: 8,
+        topic: "Forces",
+        difficulty: "Basic",
+        question: "A box of mass 25 kg is pushed across a floor with a resultant force of 50 N. What is the acceleration of the box?",
+        options: ["0.5 m/s\u00B2", "2.0 m/s\u00B2", "25 m/s\u00B2", "1250 m/s\u00B2"],
+        correctAnswer: 1,
+        explanation: "Using F = ma, a = F/m = 50/25 = 2.0 m/s\u00B2."
+      },
+      {
+        id: 9,
+        topic: "Forces",
+        difficulty: "Intermediate",
+        question: "A 5.0 kg mass hangs from two strings, each making an angle of 30\u00B0 to the horizontal. What is the tension in each string? (g = 9.8 m/s\u00B2)",
+        options: ["24.5 N", "28.3 N", "49.0 N", "56.6 N"],
+        correctAnswer: 2,
+        explanation: "Resolving vertically: 2T sin 30\u00B0 = mg, so 2T(0.5) = 49, T = 49.0 N."
+      },
+      {
+        id: 10,
+        topic: "Forces",
+        difficulty: "Intermediate",
+        question: "Which of the following is a correct statement of Newton\u2019s third law?",
+        options: [
+          "For every force, there is an equal and opposite force acting on the same object",
+          "For every action on one body, there is an equal and opposite reaction on a different body",
+          "The forces in a Newton\u2019s third law pair always cancel out",
+          "Newton\u2019s third law only applies to objects in contact"
+        ],
+        correctAnswer: 1,
+        explanation: "Newton\u2019s third law states that forces act between two different bodies, are equal in magnitude and opposite in direction, and are of the same type."
+      },
+      {
+        id: 11,
+        topic: "Forces",
+        difficulty: "Intermediate",
+        question: "A force of 80 N acts at 40\u00B0 above the horizontal. What is the horizontal component of this force?",
+        options: ["51.4 N", "61.3 N", "64.3 N", "80.0 N"],
+        correctAnswer: 1,
+        explanation: "Horizontal component = F cos \u03B8 = 80 \u00D7 cos 40\u00B0 = 80 \u00D7 0.766 = 61.3 N."
+      },
+      {
+        id: 12,
+        topic: "Forces",
+        difficulty: "Basic",
+        question: "What condition must be met for an object to be in translational equilibrium?",
+        options: [
+          "The object must be stationary",
+          "The resultant force on the object must be zero",
+          "All forces on the object must be equal",
+          "The object must be on a frictionless surface"
+        ],
+        correctAnswer: 1,
+        explanation: "Translational equilibrium requires the vector sum of all forces (the resultant force) to be zero. The object may still move at constant velocity."
+      },
+
+      // ── ENERGY (6 Questions) ──────────────────────────────────────────────
+      {
+        id: 13,
+        topic: "Energy",
+        difficulty: "Basic",
+        question: "A force of 200 N pushes an object 5.0 m in the direction of the force. How much work is done?",
+        options: ["40 J", "100 J", "1000 J", "1250 J"],
+        correctAnswer: 2,
+        explanation: "Work done = Force \u00D7 distance = 200 \u00D7 5.0 = 1000 J."
+      },
+      {
+        id: 14,
+        topic: "Energy",
+        difficulty: "Basic",
+        question: "What is the kinetic energy of a 4.0 kg object travelling at 6.0 m/s?",
+        options: ["12 J", "24 J", "72 J", "144 J"],
+        correctAnswer: 2,
+        explanation: "KE = \u00BDmv\u00B2 = \u00BD \u00D7 4.0 \u00D7 6.0\u00B2 = \u00BD \u00D7 4.0 \u00D7 36 = 72 J."
+      },
+      {
+        id: 15,
+        topic: "Energy",
+        difficulty: "Intermediate",
+        question: "A crane lifts a 200 kg load through a height of 15 m in 30 s. What is the useful power output of the crane? (g = 9.8 m/s\u00B2)",
+        options: ["100 W", "490 W", "980 W", "2940 W"],
+        correctAnswer: 2,
+        explanation: "Work done = mgh = 200 \u00D7 9.8 \u00D7 15 = 29400 J. Power = W/t = 29400/30 = 980 W."
+      },
+      {
+        id: 16,
+        topic: "Energy",
+        difficulty: "Intermediate",
+        question: "A machine has an input power of 500 W and does useful work at a rate of 350 W. What is the efficiency of the machine?",
+        options: ["30%", "50%", "65%", "70%"],
+        correctAnswer: 3,
+        explanation: "Efficiency = (useful output / total input) \u00D7 100 = (350/500) \u00D7 100 = 70%."
+      },
+      {
+        id: 17,
+        topic: "Energy",
+        difficulty: "Basic",
+        question: "A 0.50 kg ball falls from a height of 20 m. Assuming no air resistance, what is its speed just before it hits the ground? (g = 10 m/s\u00B2)",
+        options: ["10 m/s", "14 m/s", "20 m/s", "40 m/s"],
+        correctAnswer: 2,
+        explanation: "By conservation of energy: mgh = \u00BDmv\u00B2, v = \u221A(2gh) = \u221A(2 \u00D7 10 \u00D7 20) = \u221A400 = 20 m/s."
+      },
+      {
+        id: 18,
+        topic: "Energy",
+        difficulty: "Intermediate",
+        question: "Which of the following is the correct equation for gravitational potential energy near the Earth\u2019s surface?",
+        options: [
+          "E = \u00BDmv\u00B2",
+          "E = mgh",
+          "E = \u00BDkx\u00B2",
+          "E = Fd cos \u03B8"
+        ],
+        correctAnswer: 1,
+        explanation: "Gravitational potential energy near the surface is E_p = mgh, where m is mass, g is gravitational field strength, and h is height above the reference point."
+      },
+
+      // ── MOMENTUM (5 Questions) ────────────────────────────────────────────
+      {
+        id: 19,
+        topic: "Momentum",
+        difficulty: "Basic",
+        question: "A 1200 kg car travels at 15 m/s. What is its momentum?",
+        options: ["80 kg m/s", "800 kg m/s", "18000 kg m/s", "180000 kg m/s"],
+        correctAnswer: 2,
+        explanation: "Momentum = mv = 1200 \u00D7 15 = 18000 kg m/s."
+      },
+      {
+        id: 20,
+        topic: "Momentum",
+        difficulty: "Intermediate",
+        question: "A 2.0 kg trolley moving at 3.0 m/s collides with a stationary 4.0 kg trolley. They stick together. What is the velocity after the collision?",
+        options: ["0.5 m/s", "1.0 m/s", "1.5 m/s", "3.0 m/s"],
+        correctAnswer: 1,
+        explanation: "By conservation of momentum: 2.0 \u00D7 3.0 = (2.0 + 4.0) \u00D7 v, so 6.0 = 6.0v, v = 1.0 m/s."
+      },
+      {
+        id: 21,
+        topic: "Momentum",
+        difficulty: "Intermediate",
+        question: "A force of 600 N acts on a ball for 0.02 s during a kick. What is the impulse delivered to the ball?",
+        options: ["3 N s", "6 N s", "12 N s", "30000 N s"],
+        correctAnswer: 2,
+        explanation: "Impulse = F\u0394t = 600 \u00D7 0.02 = 12 N s."
+      },
+      {
+        id: 22,
+        topic: "Momentum",
+        difficulty: "Intermediate",
+        question: "In which type of collision is kinetic energy conserved?",
+        options: [
+          "Inelastic collision",
+          "Perfectly inelastic collision",
+          "Elastic collision",
+          "Explosive separation"
+        ],
+        correctAnswer: 2,
+        explanation: "In an elastic collision, both momentum and kinetic energy are conserved. In inelastic collisions, only momentum is conserved."
+      },
+      {
+        id: 23,
+        topic: "Momentum",
+        difficulty: "Basic",
+        question: "Newton\u2019s second law can be expressed as F = dp/dt. What does dp/dt represent?",
+        options: [
+          "The total momentum of the system",
+          "The rate of change of momentum",
+          "The impulse on the object",
+          "The momentum multiplied by time"
+        ],
+        correctAnswer: 1,
+        explanation: "F = dp/dt means force equals the rate of change of momentum, which is the more general form of Newton\u2019s second law."
+      },
+
+      // ── CIRCULAR MOTION (5 Questions) ─────────────────────────────────────
+      {
+        id: 24,
+        topic: "Circular Motion",
+        difficulty: "Basic",
+        question: "An object completes one full revolution of a circle of radius 2.0 m in 4.0 s. What is its angular velocity?",
+        options: ["\u03C0/4 rad/s", "\u03C0/2 rad/s", "\u03C0 rad/s", "2\u03C0 rad/s"],
+        correctAnswer: 1,
+        explanation: "Angular velocity \u03C9 = 2\u03C0/T = 2\u03C0/4.0 = \u03C0/2 rad/s."
+      },
+      {
+        id: 25,
+        topic: "Circular Motion",
+        difficulty: "Intermediate",
+        question: "A 0.50 kg mass is attached to a string of length 0.80 m and whirled in a horizontal circle at 4.0 m/s. What is the centripetal force?",
+        options: ["2.5 N", "5.0 N", "10 N", "20 N"],
+        correctAnswer: 2,
+        explanation: "Centripetal force = mv\u00B2/r = 0.50 \u00D7 4.0\u00B2 / 0.80 = 0.50 \u00D7 16 / 0.80 = 10 N."
+      },
+      {
+        id: 26,
+        topic: "Circular Motion",
+        difficulty: "Intermediate",
+        question: "A satellite orbits the Earth in a circular orbit. What provides the centripetal force for the satellite\u2019s orbit?",
+        options: [
+          "The satellite\u2019s engine thrust",
+          "Air resistance",
+          "Gravitational attraction between the satellite and Earth",
+          "The satellite\u2019s angular momentum"
+        ],
+        correctAnswer: 2,
+        explanation: "For a satellite in orbit, the gravitational force between the satellite and the Earth provides the centripetal force required for circular motion."
+      },
+      {
+        id: 27,
+        topic: "Circular Motion",
+        difficulty: "Intermediate",
+        question: "For an object moving in a circle at constant speed, which statement about its acceleration is correct?",
+        options: [
+          "Its acceleration is zero because its speed is constant",
+          "Its acceleration is directed tangentially to the circle",
+          "Its acceleration is directed towards the centre of the circle",
+          "Its acceleration is directed away from the centre of the circle"
+        ],
+        correctAnswer: 2,
+        explanation: "Even at constant speed, the direction changes continuously. The centripetal acceleration always points towards the centre of the circle."
+      },
+      {
+        id: 28,
+        topic: "Circular Motion",
+        difficulty: "Basic",
+        question: "What is the relationship between linear speed v, angular velocity \u03C9, and radius r for circular motion?",
+        options: ["v = \u03C9/r", "v = \u03C9r", "v = \u03C9r\u00B2", "v = r/\u03C9"],
+        correctAnswer: 1,
+        explanation: "The linear speed is related to angular velocity by v = \u03C9r."
+      },
+
+      // ── MATERIALS (5 Questions) ───────────────────────────────────────────
+      {
+        id: 29,
+        topic: "Materials",
+        difficulty: "Basic",
+        question: "A wire of cross-sectional area 2.0 \u00D7 10\u207B\u2076 m\u00B2 is subjected to a tensile force of 100 N. What is the stress in the wire?",
+        options: [
+          "2.0 \u00D7 10\u207B\u2074 Pa",
+          "5.0 \u00D7 10\u2077 Pa",
+          "2.0 \u00D7 10\u2078 Pa",
+          "5.0 \u00D7 10\u2078 Pa"
+        ],
+        correctAnswer: 1,
+        explanation: "Stress = F/A = 100 / (2.0 \u00D7 10\u207B\u2076) = 5.0 \u00D7 10\u2077 Pa."
+      },
+      {
+        id: 30,
+        topic: "Materials",
+        difficulty: "Basic",
+        question: "A 2.0 m long wire extends by 1.5 mm when loaded. What is the strain in the wire?",
+        options: [
+          "7.5 \u00D7 10\u207B\u2074",
+          "1.5 \u00D7 10\u207B\u00B3",
+          "3.0 \u00D7 10\u207B\u00B3",
+          "0.75"
+        ],
+        correctAnswer: 0,
+        explanation: "Strain = extension / original length = 1.5 \u00D7 10\u207B\u00B3 / 2.0 = 7.5 \u00D7 10\u207B\u2074. Strain has no units."
+      },
+      {
+        id: 31,
+        topic: "Materials",
+        difficulty: "Intermediate",
+        question: "A wire has a Young\u2019s modulus of 2.0 \u00D7 10\u00B9\u00B9 Pa, a length of 3.0 m, and a cross-sectional area of 1.0 \u00D7 10\u207B\u2076 m\u00B2. If a force of 400 N is applied, what is the extension?",
+        options: ["0.006 mm", "0.06 mm", "0.6 mm", "6.0 mm"],
+        correctAnswer: 3,
+        explanation: "E = stress/strain = (F/A)/(x/L), so x = FL/(AE) = 400 \u00D7 3.0 / (1.0 \u00D7 10\u207B\u2076 \u00D7 2.0 \u00D7 10\u00B9\u00B9) = 1200 / 20000 = 0.006 m = 6.0 mm."
+      },
+      {
+        id: 32,
+        topic: "Materials",
+        difficulty: "Intermediate",
+        question: "On a stress\u2013strain graph, what does the area under the curve up to the elastic limit represent?",
+        options: [
+          "The Young\u2019s modulus of the material",
+          "The elastic strain energy stored per unit volume",
+          "The breaking stress of the material",
+          "The tensile force applied to the material"
+        ],
+        correctAnswer: 1,
+        explanation: "The area under a stress\u2013strain graph represents the energy stored per unit volume. Up to the elastic limit, this is the elastic strain energy per unit volume."
+      },
+      {
+        id: 33,
+        topic: "Materials",
+        difficulty: "Intermediate",
+        question: "Beyond the elastic limit, a material undergoes plastic deformation. What happens when the load is removed?",
+        options: [
+          "The material returns to its original length",
+          "The material retains a permanent extension",
+          "The material fractures immediately",
+          "The material becomes stiffer"
+        ],
+        correctAnswer: 1,
+        explanation: "Plastic deformation is permanent. When the load is removed, the material does not return to its original dimensions and retains a permanent extension."
+      },
+
+      // ── WAVES (10 Questions) ──────────────────────────────────────────────
+      {
+        id: 34,
+        topic: "Waves",
+        difficulty: "Basic",
+        question: "A wave has a frequency of 500 Hz and a wavelength of 0.68 m. What is the speed of the wave?",
+        options: ["170 m/s", "340 m/s", "500 m/s", "735 m/s"],
+        correctAnswer: 1,
+        explanation: "Wave speed v = f\u03BB = 500 \u00D7 0.68 = 340 m/s."
+      },
+      {
+        id: 35,
+        topic: "Waves",
+        difficulty: "Basic",
+        question: "Which of the following is an example of a longitudinal wave?",
+        options: [
+          "Light waves",
+          "Water surface waves",
+          "Sound waves in air",
+          "Waves on a guitar string"
+        ],
+        correctAnswer: 2,
+        explanation: "Sound waves are longitudinal: the air molecules oscillate parallel to the direction of wave propagation, creating compressions and rarefactions."
+      },
+      {
+        id: 36,
+        topic: "Waves",
+        difficulty: "Basic",
+        question: "What is meant by the principle of superposition of waves?",
+        options: [
+          "Waves always cancel when they meet",
+          "The resultant displacement is the vector sum of individual displacements when waves overlap",
+          "Waves cannot pass through each other",
+          "The frequency of waves increases when they overlap"
+        ],
+        correctAnswer: 1,
+        explanation: "The principle of superposition states that when two or more waves overlap, the resultant displacement at any point is the vector sum of the individual displacements."
+      },
+      {
+        id: 37,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "A stationary wave on a string has a length of 1.2 m and vibrates in its third harmonic. What is the wavelength?",
+        options: ["0.40 m", "0.80 m", "1.2 m", "2.4 m"],
+        correctAnswer: 1,
+        explanation: "For the third harmonic on a string fixed at both ends, L = 3\u03BB/2, so \u03BB = 2L/3 = 2 \u00D7 1.2 / 3 = 0.80 m."
+      },
+      {
+        id: 38,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "In a double-slit experiment, the fringe spacing is 2.4 mm when monochromatic light of wavelength 600 nm is used. The slit separation is 0.50 mm and the screen is at a certain distance D. What is D?",
+        options: ["1.0 m", "2.0 m", "3.0 m", "4.0 m"],
+        correctAnswer: 1,
+        explanation: "Fringe spacing w = \u03BBD/d, so D = wd/\u03BB = (2.4 \u00D7 10\u207B\u00B3 \u00D7 0.50 \u00D7 10\u207B\u00B3) / (600 \u00D7 10\u207B\u2079) = 1.2 \u00D7 10\u207B\u2076 / 6.0 \u00D7 10\u207B\u2077 = 2.0 m."
+      },
+      {
+        id: 39,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "Diffraction effects are most significant when the size of the gap or obstacle is:",
+        options: [
+          "Much larger than the wavelength",
+          "Much smaller than the wavelength",
+          "Approximately equal to the wavelength",
+          "Exactly half the wavelength"
+        ],
+        correctAnswer: 2,
+        explanation: "Maximum diffraction occurs when the size of the gap or obstacle is comparable to (approximately equal to) the wavelength of the wave."
+      },
+      {
+        id: 40,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "Light passes through a single slit and produces a diffraction pattern on a screen. If the slit width is halved, what happens to the width of the central maximum?",
+        options: [
+          "It halves",
+          "It doubles",
+          "It stays the same",
+          "It quadruples"
+        ],
+        correctAnswer: 1,
+        explanation: "The angular width of the central maximum is proportional to \u03BB/a, where a is the slit width. Halving a doubles the angular width, so the central maximum becomes twice as wide."
+      },
+      {
+        id: 41,
+        topic: "Waves",
+        difficulty: "Basic",
+        question: "Which region of the electromagnetic spectrum has the shortest wavelength?",
+        options: ["Microwaves", "Ultraviolet", "X-rays", "Gamma rays"],
+        correctAnswer: 3,
+        explanation: "Gamma rays have the shortest wavelength (and highest frequency) in the electromagnetic spectrum."
+      },
+      {
+        id: 42,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "A police car siren emits sound at 800 Hz. The car approaches a stationary observer at 20 m/s. What frequency does the observer hear? (Speed of sound = 340 m/s)",
+        options: ["750 Hz", "800 Hz", "850 Hz", "900 Hz"],
+        correctAnswer: 2,
+        explanation: "Doppler effect: f\u2032 = f \u00D7 v/(v \u2013 v_s) = 800 \u00D7 340/(340 \u2013 20) = 800 \u00D7 340/320 = 850 Hz."
+      },
+      {
+        id: 43,
+        topic: "Waves",
+        difficulty: "Intermediate",
+        question: "When light travels from glass (n = 1.5) into air (n = 1.0), what is the critical angle for total internal reflection?",
+        options: ["33.6\u00B0", "41.8\u00B0", "48.6\u00B0", "56.4\u00B0"],
+        correctAnswer: 1,
+        explanation: "sin C = n\u2082/n\u2081 = 1.0/1.5 = 0.667, so C = arcsin(0.667) = 41.8\u00B0."
+      },
+
+      // ── THERMAL PHYSICS (6 Questions) ─────────────────────────────────────
+      {
+        id: 44,
+        topic: "Thermal Physics",
+        difficulty: "Basic",
+        question: "How much energy is required to raise the temperature of 2.0 kg of water by 5.0 \u00B0C? (Specific heat capacity of water = 4200 J kg\u207B\u00B9 \u00B0C\u207B\u00B9)",
+        options: ["2100 J", "4200 J", "21000 J", "42000 J"],
+        correctAnswer: 3,
+        explanation: "Q = mc\u0394T = 2.0 \u00D7 4200 \u00D7 5.0 = 42000 J."
+      },
+      {
+        id: 45,
+        topic: "Thermal Physics",
+        difficulty: "Basic",
+        question: "During a change of state at the melting point, the temperature of a substance remains constant because:",
+        options: [
+          "No energy is being supplied",
+          "Energy is being used to break intermolecular bonds rather than increase kinetic energy",
+          "The specific heat capacity becomes infinite",
+          "Heat is lost to the surroundings at the same rate it is supplied"
+        ],
+        correctAnswer: 1,
+        explanation: "At a change of state, the energy supplied (latent heat) is used to break or form intermolecular bonds, not to increase the kinetic energy of particles, so the temperature stays constant."
+      },
+      {
+        id: 46,
+        topic: "Thermal Physics",
+        difficulty: "Intermediate",
+        question: "An ideal gas is contained in a cylinder at 300 K and a pressure of 1.0 \u00D7 10\u2075 Pa. If the temperature is increased to 600 K at constant volume, what is the new pressure?",
+        options: [
+          "0.5 \u00D7 10\u2075 Pa",
+          "1.0 \u00D7 10\u2075 Pa",
+          "2.0 \u00D7 10\u2075 Pa",
+          "4.0 \u00D7 10\u2075 Pa"
+        ],
+        correctAnswer: 2,
+        explanation: "At constant volume, P/T = constant. P\u2082 = P\u2081 \u00D7 T\u2082/T\u2081 = 1.0 \u00D7 10\u2075 \u00D7 600/300 = 2.0 \u00D7 10\u2075 Pa."
+      },
+      {
+        id: 47,
+        topic: "Thermal Physics",
+        difficulty: "Intermediate",
+        question: "According to the kinetic theory, the average kinetic energy of gas molecules is directly proportional to:",
+        options: [
+          "The pressure of the gas",
+          "The volume of the gas",
+          "The absolute temperature of the gas",
+          "The number of molecules"
+        ],
+        correctAnswer: 2,
+        explanation: "Average kinetic energy = (3/2)kT, where k is Boltzmann\u2019s constant and T is the absolute (kelvin) temperature."
+      },
+      {
+        id: 48,
+        topic: "Thermal Physics",
+        difficulty: "Intermediate",
+        question: "The first law of thermodynamics is given by \u0394U = Q \u2013 W. If 500 J of heat is added to a gas and the gas does 200 J of work on its surroundings, what is the change in internal energy?",
+        options: ["200 J", "300 J", "500 J", "700 J"],
+        correctAnswer: 1,
+        explanation: "\u0394U = Q \u2013 W = 500 \u2013 200 = 300 J. The internal energy increases by 300 J."
+      },
+      {
+        id: 49,
+        topic: "Thermal Physics",
+        difficulty: "Basic",
+        question: "How much energy is needed to melt 0.50 kg of ice at 0 \u00B0C? (Specific latent heat of fusion of ice = 3.34 \u00D7 10\u2075 J kg\u207B\u00B9)",
+        options: [
+          "1.67 \u00D7 10\u2074 J",
+          "1.67 \u00D7 10\u2075 J",
+          "3.34 \u00D7 10\u2075 J",
+          "6.68 \u00D7 10\u2075 J"
+        ],
+        correctAnswer: 1,
+        explanation: "Q = mL = 0.50 \u00D7 3.34 \u00D7 10\u2075 = 1.67 \u00D7 10\u2075 J."
+      },
+
+      // ── GRAVITATIONAL FIELDS (4 Questions) ───────────────────────────────
+      {
+        id: 50,
+        topic: "Gravitational Fields",
+        difficulty: "Basic",
+        question: "The gravitational field strength at the surface of a planet is 6.0 N kg\u207B\u00B9. What is the weight of a 10 kg object on this planet?",
+        options: ["0.6 N", "6.0 N", "60 N", "600 N"],
+        correctAnswer: 2,
+        explanation: "Weight W = mg = 10 \u00D7 6.0 = 60 N."
+      },
+      {
+        id: 51,
+        topic: "Gravitational Fields",
+        difficulty: "Intermediate",
+        question: "Newton\u2019s law of gravitation states that the gravitational force between two masses is proportional to:",
+        options: [
+          "The sum of their masses divided by the square of the distance between them",
+          "The product of their masses divided by the distance between them",
+          "The product of their masses divided by the square of the distance between them",
+          "The product of their masses multiplied by the square of the distance between them"
+        ],
+        correctAnswer: 2,
+        explanation: "Newton\u2019s law: F = GMm/r\u00B2. The force is proportional to the product of the two masses and inversely proportional to the square of the distance between their centres."
+      },
+      {
+        id: 52,
+        topic: "Gravitational Fields",
+        difficulty: "Intermediate",
+        question: "A satellite orbits the Earth at a distance of 2R from the Earth\u2019s centre, where R is the Earth\u2019s radius. If the gravitational field strength at the surface is g, what is the field strength at the satellite?",
+        options: ["g/2", "g/4", "g/8", "2g"],
+        correctAnswer: 1,
+        explanation: "Gravitational field strength follows an inverse-square law: g\u2032 = g(R/r)\u00B2 = g(R/2R)\u00B2 = g/4."
+      },
+      {
+        id: 53,
+        topic: "Gravitational Fields",
+        difficulty: "Intermediate",
+        question: "What is the gravitational potential at a point in a gravitational field?",
+        options: [
+          "The gravitational force per unit mass at that point",
+          "The work done per unit mass in bringing a small test mass from infinity to that point",
+          "The kinetic energy of a mass at that point",
+          "The weight of a unit mass at that point"
+        ],
+        correctAnswer: 1,
+        explanation: "Gravitational potential at a point is defined as the work done per unit mass in bringing a small test mass from infinity to that point. It is always negative near a mass."
+      },
+
+      // ── ELECTRIC FIELDS (5 Questions) ─────────────────────────────────────
+      {
+        id: 54,
+        topic: "Electric Fields",
+        difficulty: "Basic",
+        question: "The electric field strength between two parallel plates separated by 5.0 cm with a potential difference of 200 V is:",
+        options: ["10 V/m", "40 V/m", "1000 V/m", "4000 V/m"],
+        correctAnswer: 3,
+        explanation: "E = V/d = 200 / 0.05 = 4000 V/m."
+      },
+      {
+        id: 55,
+        topic: "Electric Fields",
+        difficulty: "Intermediate",
+        question: "Two point charges of +3.0 \u00B5C and \u20132.0 \u00B5C are separated by 0.10 m. What is the magnitude of the electrostatic force between them? (k = 8.99 \u00D7 10\u2079 N m\u00B2 C\u207B\u00B2)",
+        options: ["2.7 N", "5.4 N", "27 N", "54 N"],
+        correctAnswer: 1,
+        explanation: "F = kQ\u2081Q\u2082/r\u00B2 = 8.99 \u00D7 10\u2079 \u00D7 3.0 \u00D7 10\u207B\u2076 \u00D7 2.0 \u00D7 10\u207B\u2076 / (0.10)\u00B2 = 8.99 \u00D7 10\u2079 \u00D7 6.0 \u00D7 10\u207B\u00B9\u00B2 / 0.01 = 5.4 N."
+      },
+      {
+        id: 56,
+        topic: "Electric Fields",
+        difficulty: "Intermediate",
+        question: "Which statement correctly describes the electric potential at a point due to a positive point charge?",
+        options: [
+          "It is negative and decreases with distance",
+          "It is positive and increases with distance",
+          "It is positive and decreases with distance",
+          "It is zero at all points"
+        ],
+        correctAnswer: 2,
+        explanation: "The electric potential due to a positive point charge is positive (V = kQ/r) and decreases with increasing distance r from the charge."
+      },
+      {
+        id: 57,
+        topic: "Electric Fields",
+        difficulty: "Intermediate",
+        question: "A parallel plate capacitor has a capacitance of 4.7 \u00B5F and is charged to a potential difference of 12 V. What is the charge stored?",
+        options: [
+          "0.39 \u00B5C",
+          "2.6 \u00B5C",
+          "56.4 \u00B5C",
+          "56.4 C"
+        ],
+        correctAnswer: 2,
+        explanation: "Q = CV = 4.7 \u00D7 10\u207B\u2076 \u00D7 12 = 56.4 \u00D7 10\u207B\u2076 C = 56.4 \u00B5C."
+      },
+      {
+        id: 58,
+        topic: "Electric Fields",
+        difficulty: "Basic",
+        question: "The electric field between two parallel plates is:",
+        options: [
+          "Radial",
+          "Uniform",
+          "Zero",
+          "Inversely proportional to the square of the distance"
+        ],
+        correctAnswer: 1,
+        explanation: "The electric field between two parallel plates (ignoring edge effects) is uniform \u2014 it has the same magnitude and direction at all points between the plates."
+      },
+
+      // ── MAGNETIC FIELDS (4 Questions) ─────────────────────────────────────
+      {
+        id: 59,
+        topic: "Magnetic Fields",
+        difficulty: "Basic",
+        question: "A straight wire carrying a current of 3.0 A is placed perpendicular to a magnetic field of 0.20 T. The length of wire in the field is 0.50 m. What is the force on the wire?",
+        options: ["0.15 N", "0.30 N", "0.60 N", "3.0 N"],
+        correctAnswer: 1,
+        explanation: "F = BIL = 0.20 \u00D7 3.0 \u00D7 0.50 = 0.30 N."
+      },
+      {
+        id: 60,
+        topic: "Magnetic Fields",
+        difficulty: "Basic",
+        question: "Fleming\u2019s left-hand rule is used to determine the direction of the force on a current-carrying conductor in a magnetic field. What do the thumb, first finger, and second finger represent?",
+        options: [
+          "Thumb = Force, First finger = Field, Second finger = Current",
+          "Thumb = Field, First finger = Current, Second finger = Force",
+          "Thumb = Current, First finger = Force, Second finger = Field",
+          "Thumb = Force, First finger = Current, Second finger = Field"
+        ],
+        correctAnswer: 0,
+        explanation: "In Fleming\u2019s left-hand rule: Thumb = Force (thrust), First finger = Field (magnetic), Second finger = Current."
+      },
+      {
+        id: 61,
+        topic: "Magnetic Fields",
+        difficulty: "Intermediate",
+        question: "According to Faraday\u2019s law of electromagnetic induction, the magnitude of the induced EMF in a coil is equal to:",
+        options: [
+          "The total magnetic flux through the coil",
+          "The magnetic flux density multiplied by the area of the coil",
+          "The rate of change of magnetic flux linkage through the coil",
+          "The current flowing through the coil multiplied by its resistance"
+        ],
+        correctAnswer: 2,
+        explanation: "Faraday\u2019s law states that the induced EMF equals the rate of change of magnetic flux linkage: \u03B5 = \u2013d(N\u03A6)/dt."
+      },
+      {
+        id: 62,
+        topic: "Magnetic Fields",
+        difficulty: "Intermediate",
+        question: "A coil of 200 turns has a magnetic flux through it that changes from 0.05 Wb to 0.02 Wb in 0.1 s. What is the magnitude of the induced EMF?",
+        options: ["6 V", "30 V", "60 V", "600 V"],
+        correctAnswer: 2,
+        explanation: "\u03B5 = N \u00D7 \u0394\u03A6/\u0394t = 200 \u00D7 (0.05 \u2013 0.02)/0.1 = 200 \u00D7 0.03/0.1 = 200 \u00D7 0.3 = 60 V."
+      },
+
+      // ── PARTICLE PHYSICS (3 Questions) ────────────────────────────────────
+      {
+        id: 63,
+        topic: "Particles and Radiation",
+        difficulty: "Basic",
+        question: "An atom of carbon-14 (\u00B9\u2074C) has how many protons and how many neutrons?",
+        options: [
+          "6 protons and 6 neutrons",
+          "6 protons and 8 neutrons",
+          "7 protons and 7 neutrons",
+          "8 protons and 6 neutrons"
+        ],
+        correctAnswer: 1,
+        explanation: "Carbon has atomic number 6 (6 protons). Carbon-14 has mass number 14, so neutrons = 14 \u2013 6 = 8."
+      },
+      {
+        id: 64,
+        topic: "Particles and Radiation",
+        difficulty: "Basic",
+        question: "Isotopes of an element have:",
+        options: [
+          "The same number of neutrons but different numbers of protons",
+          "The same number of protons but different numbers of neutrons",
+          "Different numbers of protons and electrons",
+          "The same mass number but different atomic numbers"
+        ],
+        correctAnswer: 1,
+        explanation: "Isotopes have the same number of protons (same element) but different numbers of neutrons, giving them different mass numbers."
+      },
+      {
+        id: 65,
+        topic: "Particles and Radiation",
+        difficulty: "Intermediate",
+        question: "In beta-minus (\u03B2\u207B) decay, which of the following occurs?",
+        options: [
+          "A proton changes into a neutron, emitting a positron and a neutrino",
+          "A neutron changes into a proton, emitting an electron and an antineutrino",
+          "An alpha particle is emitted from the nucleus",
+          "A gamma ray is emitted with no change in proton or neutron number"
+        ],
+        correctAnswer: 1,
+        explanation: "In \u03B2\u207B decay, a neutron converts to a proton inside the nucleus, emitting an electron (beta particle) and an electron antineutrino."
+      },
+
+      // ── PARTICLES AND RADIATION - Additional (3 Questions) ────────────────
+      {
+        id: 66,
+        topic: "Particles and Radiation",
+        difficulty: "Intermediate",
+        question: "In the photoelectric effect, electrons are emitted from a metal surface only when the frequency of the incident radiation exceeds a certain value. What is this minimum frequency called?",
+        options: [
+          "The resonant frequency",
+          "The critical frequency",
+          "The threshold frequency",
+          "The de Broglie frequency"
+        ],
+        correctAnswer: 2,
+        explanation: "The threshold frequency is the minimum frequency of incident radiation required to release photoelectrons from a metal surface. Below this frequency, no electrons are emitted regardless of intensity."
+      },
+      {
+        id: 67,
+        topic: "Particles and Radiation",
+        difficulty: "Intermediate",
+        question: "A proton is made up of which combination of quarks?",
+        options: [
+          "uud (two up quarks and one down quark)",
+          "udd (one up quark and two down quarks)",
+          "uus (two up quarks and one strange quark)",
+          "dds (two down quarks and one strange quark)"
+        ],
+        correctAnswer: 0,
+        explanation: "A proton has quark composition uud. Each up quark has charge +2/3 e and the down quark has charge \u22121/3 e, giving a total charge of +1 e."
+      },
+      {
+        id: 68,
+        topic: "Particles and Radiation",
+        difficulty: "Intermediate",
+        question: "Which of the following is evidence for the wave nature of electrons?",
+        options: [
+          "The photoelectric effect",
+          "Electron diffraction patterns",
+          "Thermionic emission",
+          "Pair production"
+        ],
+        correctAnswer: 1,
+        explanation: "Electron diffraction patterns demonstrate wave\u2013particle duality. When electrons pass through a thin crystal or graphite, they produce diffraction rings similar to those produced by waves, confirming the de Broglie hypothesis."
+      },
+
+      // ── ELECTRICITY (6 Questions) \u2014 AQA Section 3.5 ─────────────────────
+      {
+        id: 69,
+        topic: "Electricity",
+        difficulty: "Basic",
+        question: "A current of 3.0 A flows through a component for 2.0 minutes. What is the total charge that passes through the component?",
+        options: ["6.0 C", "60 C", "120 C", "360 C"],
+        correctAnswer: 3,
+        explanation: "Using Q = It = 3.0 \u00D7 (2.0 \u00D7 60) = 3.0 \u00D7 120 = 360 C. Time must be converted to seconds."
+      },
+      {
+        id: 70,
+        topic: "Electricity",
+        difficulty: "Basic",
+        question: "A resistor has a potential difference of 12 V across it and a current of 0.50 A flowing through it. What is its resistance?",
+        options: ["6.0 \u03A9", "12 \u03A9", "24 \u03A9", "0.042 \u03A9"],
+        correctAnswer: 2,
+        explanation: "Using Ohm\u2019s law: R = V/I = 12/0.50 = 24 \u03A9."
+      },
+      {
+        id: 71,
+        topic: "Electricity",
+        difficulty: "Intermediate",
+        question: "A wire has a length of 2.0 m, cross-sectional area of 1.0 \u00D7 10\u207B\u2076 m\u00B2, and resistance of 34 \u03A9. What is the resistivity of the material?",
+        options: [
+          "1.7 \u00D7 10\u207B\u2075 \u03A9 m",
+          "6.8 \u00D7 10\u207B\u2075 \u03A9 m",
+          "3.4 \u00D7 10\u207B\u2076 \u03A9 m",
+          "1.7 \u00D7 10\u207B\u00B2 \u03A9 m"
+        ],
+        correctAnswer: 0,
+        explanation: "Using \u03C1 = RA/L = 34 \u00D7 (1.0 \u00D7 10\u207B\u2076) / 2.0 = 1.7 \u00D7 10\u207B\u2075 \u03A9 m."
+      },
+      {
+        id: 72,
+        topic: "Electricity",
+        difficulty: "Intermediate",
+        question: "Two resistors of 6.0 \u03A9 and 12 \u03A9 are connected in parallel. What is their combined resistance?",
+        options: ["2.0 \u03A9", "4.0 \u03A9", "9.0 \u03A9", "18 \u03A9"],
+        correctAnswer: 1,
+        explanation: "For parallel resistors: 1/R = 1/6 + 1/12 = 2/12 + 1/12 = 3/12, so R = 12/3 = 4.0 \u03A9."
+      },
+      {
+        id: 73,
+        topic: "Electricity",
+        difficulty: "Intermediate",
+        question: "In a potential divider circuit, two resistors of 200 \u03A9 and 300 \u03A9 are connected in series across a 10 V supply. What is the potential difference across the 300 \u03A9 resistor?",
+        options: ["4.0 V", "5.0 V", "6.0 V", "7.5 V"],
+        correctAnswer: 2,
+        explanation: "Using the potential divider formula: V = (R\u2082 / (R\u2081 + R\u2082)) \u00D7 V_supply = (300 / 500) \u00D7 10 = 6.0 V."
+      },
+      {
+        id: 74,
+        topic: "Electricity",
+        difficulty: "Intermediate",
+        question: "A battery has an EMF of 9.0 V and an internal resistance of 0.50 \u03A9. When connected to an external resistance of 4.0 \u03A9, what is the terminal potential difference?",
+        options: ["7.2 V", "8.0 V", "8.5 V", "9.0 V"],
+        correctAnswer: 1,
+        explanation: "Current I = EMF / (R + r) = 9.0 / (4.0 + 0.50) = 2.0 A. Terminal p.d. = EMF \u2212 Ir = 9.0 \u2212 (2.0 \u00D7 0.50) = 8.0 V."
+      }
+    ];
+
+    // =========================================================================
+    // TOPIC METADATA
+    // =========================================================================
+    const topicMetadata = {
+      "Kinematics": { examWeight: 8, dependencyScore: 9, tier: "foundation" },
+      "Forces": { examWeight: 9, dependencyScore: 10, tier: "foundation" },
+      "Energy": { examWeight: 9, dependencyScore: 8, tier: "foundation" },
+      "Momentum": { examWeight: 7, dependencyScore: 7, tier: "foundation" },
+      "Circular Motion": { examWeight: 6, dependencyScore: 5, tier: "foundation" },
+      "Materials": { examWeight: 6, dependencyScore: 4, tier: "foundation" },
+      "Waves": { examWeight: 9, dependencyScore: 7, tier: "foundation" },
+      "Electricity": { examWeight: 9, dependencyScore: 9, tier: "foundation" },
+      "Thermal Physics": { examWeight: 7, dependencyScore: 6, tier: "foundation" },
+      "Gravitational Fields": { examWeight: 7, dependencyScore: 6, tier: "foundation" },
+      "Electric Fields": { examWeight: 8, dependencyScore: 7, tier: "foundation" },
+      "Magnetic Fields": { examWeight: 7, dependencyScore: 5, tier: "foundation" },
+      "Particles and Radiation": { examWeight: 7, dependencyScore: 5, tier: "foundation" }
+    };
+
+    // =========================================================================
+    // TOPIC DEPENDENCIES
+    // =========================================================================
+    const dependencies = {
+      "Kinematics": [],
+      "Forces": ["Kinematics"],
+      "Energy": ["Forces"],
+      "Momentum": ["Forces"],
+      "Circular Motion": ["Forces", "Kinematics"],
+      "Materials": ["Forces"],
+      "Waves": [],
+      "Electricity": ["Energy"],
+      "Thermal Physics": ["Energy"],
+      "Gravitational Fields": ["Forces", "Circular Motion"],
+      "Electric Fields": ["Forces", "Electricity"],
+      "Magnetic Fields": ["Forces", "Electric Fields"],
+      "Particles and Radiation": []
+    };
+
+    // =========================================================================
+    // TOPIC COLORS
+    // =========================================================================
+    const topicColors = {
+      "Kinematics": "#3182ce",
+      "Forces": "#e53e3e",
+      "Energy": "#38a169",
+      "Momentum": "#d69e2e",
+      "Circular Motion": "#805ad5",
+      "Materials": "#dd6b20",
+      "Waves": "#319795",
+      "Electricity": "#e53e3e",
+      "Thermal Physics": "#b83280",
+      "Gravitational Fields": "#2b6cb0",
+      "Electric Fields": "#d69e2e",
+      "Magnetic Fields": "#805ad5",
+      "Particles and Radiation": "#38a169"
+    };
+
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+    function calculateTopicScores(answers) {
+      const topics = {};
+      questionBank.forEach((q) => {
+        if (!topics[q.topic]) {
+          topics[q.topic] = { correct: 0, total: 0 };
+        }
+        topics[q.topic].total += 1;
+        if (answers[q.id] === q.correctAnswer) {
+          topics[q.topic].correct += 1;
+        }
+      });
+      return topics;
+    }
+
+    function getPerformanceCategory(percentage) {
+      if (percentage < 60) return { label: "URGENT", color: "#e53e3e", bg: "#fff5f5" };
+      if (percentage <= 80) return { label: "REVIEW", color: "#d69e2e", bg: "#fffff0" };
+      return { label: "CONFIDENT", color: "#38a169", bg: "#f0fff4" };
+    }
+
+    function calculatePriorityScore(topic, percentage) {
+      const meta = topicMetadata[topic];
+      const performanceGap = (100 - percentage) / 10;
+      return (meta.examWeight * 0.4) + (performanceGap * 0.4) + (meta.dependencyScore * 0.2);
+    }
+
+    function getScoreColor(pct) {
+      if (pct >= 80) return "#38a169";
+      if (pct >= 60) return "#d69e2e";
+      return "#e53e3e";
+    }
+
+    // =========================================================================
+    // WELCOME SCREEN
+    // =========================================================================
+    function WelcomeScreen({ onStart }) {
+      const [name, setName] = useState("");
+
+      return (
+        <div className="welcome-screen">
+          <div className="welcome-card">
+            <h1>AQA A-Level Physics</h1>
+            <div className="subtitle">Foundation Tier Diagnostic Assessment</div>
+            <p className="description">
+              This diagnostic assessment covers 13 core topics across the AQA A-Level Physics specification
+              (Sections 3.1\u20133.8). Your results will identify areas of strength and areas requiring further study,
+              along with a personalised revision plan.
+            </p>
+            <div className="info-box">
+              <p><strong>74 questions</strong> across 13 topics</p>
+              <p><strong>No time limit</strong> \u2014 work at your own pace</p>
+              <p><strong>Detailed PDF report</strong> with prioritised revision guidance</p>
+              <p><strong>All questions</strong> must be answered before submission</p>
+            </div>
+            <input
+              className="name-input"
+              type="text"
+              placeholder="Enter your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) onStart(name.trim()); }}
+            />
+            <button
+              className="btn btn-primary"
+              disabled={!name.trim()}
+              onClick={() => onStart(name.trim())}
+              style={{ width: "100%" }}
+            >
+              Start Assessment
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // QUIZ SCREEN
+    // =========================================================================
+    function QuizScreen({ studentName, onSubmit }) {
+      const [currentQ, setCurrentQ] = useState(0);
+      const [answers, setAnswers] = useState({});
+      const [showGrid, setShowGrid] = useState(false);
+
+      const question = questionBank[currentQ];
+      const totalQ = questionBank.length;
+      const answeredCount = Object.keys(answers).length;
+      const allAnswered = answeredCount === totalQ;
+      const progressPct = (answeredCount / totalQ) * 100;
+
+      const selectOption = (index) => {
+        setAnswers((prev) => ({ ...prev, [question.id]: index }));
+      };
+
+      const goTo = (idx) => {
+        if (idx >= 0 && idx < totalQ) setCurrentQ(idx);
+      };
+
+      return (
+        <div>
+          {/* Header */}
+          <div className="quiz-header">
+            <div className="progress-info">
+              <span>Question {currentQ + 1} of {totalQ}</span>
+              <span>{answeredCount}/{totalQ} answered ({Math.round(progressPct)}%)</span>
+            </div>
+            <div className="progress-bar-track">
+              <div className="progress-bar-fill" style={{ width: progressPct + "%" }} />
+            </div>
+          </div>
+
+          {/* Question Grid Toggle */}
+          <div className="question-grid-toggle">
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowGrid(!showGrid)}
+              style={{ fontSize: "14px", padding: "8px 16px" }}
+            >
+              {showGrid ? "Hide" : "Show"} Question Navigator
+            </button>
+          </div>
+
+          {/* Question Grid */}
+          {showGrid && (
+            <div className="question-grid">
+              {questionBank.map((q, idx) => (
+                <button
+                  key={q.id}
+                  className={
+                    "grid-item" +
+                    (idx === currentQ ? " current" : "") +
+                    (answers[q.id] !== undefined && idx !== currentQ ? " answered" : "")
+                  }
+                  onClick={() => goTo(idx)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Quiz Card */}
+          <div className="quiz-card">
+            <div className="question-meta">
+              <span className="badge badge-topic" style={{ background: topicColors[question.topic] + "20", color: topicColors[question.topic] }}>
+                {question.topic}
+              </span>
+              <span className={"badge " + (question.difficulty === "Basic" ? "badge-basic" : "badge-intermediate")}>
+                {question.difficulty}
+              </span>
+            </div>
+            <div className="question-number">Question {currentQ + 1}</div>
+            <div className="question-text">{question.question}</div>
+            <div className="options-list">
+              {question.options.map((opt, idx) => {
+                const letters = ["A", "B", "C", "D"];
+                const isSelected = answers[question.id] === idx;
+                return (
+                  <button
+                    key={idx}
+                    className={"option-btn" + (isSelected ? " selected" : "")}
+                    onClick={() => selectOption(idx)}
+                  >
+                    <span className="option-letter">{letters[idx]}</span>
+                    <span>{opt}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="quiz-nav">
+            <button
+              className="btn btn-secondary"
+              disabled={currentQ === 0}
+              onClick={() => goTo(currentQ - 1)}
+            >
+              Previous
+            </button>
+            {currentQ < totalQ - 1 ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => goTo(currentQ + 1)}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                className="btn btn-success"
+                disabled={!allAnswered}
+                onClick={() => onSubmit(answers)}
+                title={allAnswered ? "Submit your assessment" : "Answer all questions before submitting"}
+              >
+                Submit Assessment {!allAnswered ? `(${totalQ - answeredCount} remaining)` : ""}
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // RESULTS SCREEN
+    // =========================================================================
+    function ResultsScreen({ studentName, answers, onRetake }) {
+      // Calculate overall score
+      let totalCorrect = 0;
+      questionBank.forEach((q) => {
+        if (answers[q.id] === q.correctAnswer) totalCorrect++;
+      });
+      const overallPct = Math.round((totalCorrect / questionBank.length) * 100);
+
+      // Calculate topic scores
+      const topicScores = calculateTopicScores(answers);
+
+      // Build sorted topic data
+      const topicData = Object.entries(topicScores).map(([topic, data]) => {
+        const pct = Math.round((data.correct / data.total) * 100);
+        const priority = calculatePriorityScore(topic, pct);
+        const category = getPerformanceCategory(pct);
+        return { topic, correct: data.correct, total: data.total, pct, priority, category };
+      });
+
+      topicData.sort((a, b) => b.priority - a.priority);
+
+      // Category counts
+      const urgentCount = topicData.filter((t) => t.category.label === "URGENT").length;
+      const reviewCount = topicData.filter((t) => t.category.label === "REVIEW").length;
+      const confidentCount = topicData.filter((t) => t.category.label === "CONFIDENT").length;
+
+      // Top 5 weakest
+      const weakest5 = topicData.slice(0, 5);
+
+      // Overall assessment text
+      let assessmentText = "";
+      let assessmentColor = "";
+      if (overallPct >= 80) {
+        assessmentText = "Strong overall performance. Focus on maintaining knowledge and tackling advanced problems.";
+        assessmentColor = "#38a169";
+      } else if (overallPct >= 60) {
+        assessmentText = "Satisfactory foundation with clear areas for improvement. A focused revision plan will raise your grade.";
+        assessmentColor = "#d69e2e";
+      } else {
+        assessmentText = "Significant gaps identified across core topics. Prioritised, structured revision is strongly recommended.";
+        assessmentColor = "#e53e3e";
+      }
+
+      // PDF Generation
+      const generatePDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const pageW = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        const contentW = pageW - 2 * margin;
+        const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+        // ─── PAGE 1: Executive Summary ───
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 45, "F");
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text("AQA A-Level Physics", margin, 22);
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "normal");
+        doc.text("Foundation Tier Diagnostic Report", margin, 34);
+
+        doc.setTextColor(0, 0, 0);
+        let y = 60;
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Student:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(studentName, margin + 30, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Date:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(today, margin + 30, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Score:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(totalCorrect + " / " + questionBank.length + " (" + overallPct + "%)", margin + 30, y);
+        y += 16;
+
+        // Score bar
+        doc.setFillColor(226, 232, 240);
+        doc.roundedRect(margin, y, contentW, 10, 2, 2, "F");
+        const barColor = overallPct >= 80 ? [56, 161, 105] : overallPct >= 60 ? [214, 158, 46] : [229, 62, 62];
+        doc.setFillColor(...barColor);
+        doc.roundedRect(margin, y, contentW * (overallPct / 100), 10, 2, 2, "F");
+        y += 20;
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "italic");
+        doc.text(assessmentText, margin, y, { maxWidth: contentW });
+        y += 20;
+
+        // Summary stats
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text("Performance Overview", margin, y);
+        y += 10;
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+
+        doc.setTextColor(229, 62, 62);
+        doc.text("URGENT (< 60%): " + urgentCount + " topic" + (urgentCount !== 1 ? "s" : ""), margin, y);
+        y += 7;
+        doc.setTextColor(214, 158, 46);
+        doc.text("REVIEW (60-80%): " + reviewCount + " topic" + (reviewCount !== 1 ? "s" : ""), margin, y);
+        y += 7;
+        doc.setTextColor(56, 161, 105);
+        doc.text("CONFIDENT (> 80%): " + confidentCount + " topic" + (confidentCount !== 1 ? "s" : ""), margin, y);
+        doc.setTextColor(0, 0, 0);
+
+        // ─── PAGE 2: Topic Breakdown Table ───
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Topic Breakdown", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        const tableData = topicData.map((t, idx) => [
+          idx + 1,
+          t.topic,
+          t.correct + " / " + t.total,
+          t.pct + "%",
+          topicMetadata[t.topic].examWeight + " / 10",
+          t.category.label
+        ]);
+
+        doc.autoTable({
+          startY: 40,
+          head: [["Rank", "Topic", "Score", "%", "Exam Freq.", "Status"]],
+          body: tableData,
+          margin: { left: margin, right: margin },
+          styles: {
+            fontSize: 10,
+            cellPadding: 4
+          },
+          headStyles: {
+            fillColor: [26, 54, 93],
+            textColor: [255, 255, 255],
+            fontStyle: "bold"
+          },
+          columnStyles: {
+            0: { cellWidth: 14, halign: "center" },
+            2: { halign: "center" },
+            3: { halign: "center" },
+            4: { halign: "center" },
+            5: { halign: "center", fontStyle: "bold" }
+          },
+          didParseCell: function (data) {
+            if (data.column.index === 5 && data.section === "body") {
+              const val = data.cell.raw;
+              if (val === "URGENT") {
+                data.cell.styles.textColor = [229, 62, 62];
+              } else if (val === "REVIEW") {
+                data.cell.styles.textColor = [214, 158, 46];
+              } else if (val === "CONFIDENT") {
+                data.cell.styles.textColor = [56, 161, 105];
+              }
+            }
+          }
+        });
+
+        // ─── PAGE 3: Detailed Guidance ───
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Detailed Revision Guidance", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        y = 40;
+        topicData.forEach((t) => {
+          if (y > 260) {
+            doc.addPage();
+            y = 20;
+          }
+
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "bold");
+          doc.text(t.topic + " \u2014 " + t.correct + "/" + t.total + " (" + t.pct + "%)", margin, y);
+          y += 7;
+
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+
+          let advice = "";
+          const deps = dependencies[t.topic] || [];
+          const depsText = deps.length > 0 ? " This topic builds on: " + deps.join(", ") + "." : "";
+
+          if (t.category.label === "URGENT") {
+            advice = "URGENT: Return to the fundamentals of " + t.topic + ". Work through textbook examples, watch explanatory videos, and attempt basic practice questions before progressing to exam-style problems." + depsText;
+          } else if (t.category.label === "REVIEW") {
+            advice = "REVIEW: Consolidate your understanding of " + t.topic + ". Focus on areas where marks were dropped, practise applying concepts to unfamiliar contexts, and complete past paper questions on this topic." + depsText;
+          } else {
+            advice = "CONFIDENT: Maintain your strong performance in " + t.topic + ". Challenge yourself with multi-step and synoptic questions. Aim for full marks in exam conditions.";
+          }
+
+          const lines = doc.splitTextToSize(advice, contentW);
+          doc.text(lines, margin, y);
+          y += lines.length * 5 + 8;
+        });
+
+        // ─── PAGE 4: 4-Week Action Plan ───
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("4-Week Revision Action Plan", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        y = 42;
+
+        const urgentTopics = topicData.filter((t) => t.category.label === "URGENT").map((t) => t.topic);
+        const reviewTopics = topicData.filter((t) => t.category.label === "REVIEW").map((t) => t.topic);
+        const confidentTopics = topicData.filter((t) => t.category.label === "CONFIDENT").map((t) => t.topic);
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(229, 62, 62);
+        doc.text("Weeks 1-2: Address Urgent Topics", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        if (urgentTopics.length > 0) {
+          urgentTopics.forEach((t) => {
+            doc.text("\u2022  " + t, margin + 4, y);
+            y += 6;
+          });
+        } else {
+          doc.text("No urgent topics \u2014 well done!", margin + 4, y);
+          y += 6;
+        }
+        const w12Lines = doc.splitTextToSize(
+          "Focus on rebuilding core understanding. Use textbook worked examples, visual aids, and online tutorials. Aim for 30-45 minutes of focused study per topic per day. Test yourself with basic recall questions after each session.",
+          contentW - 8
+        );
+        y += 2;
+        doc.text(w12Lines, margin + 4, y);
+        y += w12Lines.length * 5 + 12;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(214, 158, 46);
+        doc.text("Weeks 3-4: Consolidate Review Topics", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        if (reviewTopics.length > 0) {
+          reviewTopics.forEach((t) => {
+            doc.text("\u2022  " + t, margin + 4, y);
+            y += 6;
+          });
+        } else {
+          doc.text("No review topics identified.", margin + 4, y);
+          y += 6;
+        }
+        const w34Lines = doc.splitTextToSize(
+          "Work through past paper questions and mark schemes. Identify common errors and misunderstandings. Practise under timed conditions to build exam technique and speed.",
+          contentW - 8
+        );
+        y += 2;
+        doc.text(w34Lines, margin + 4, y);
+        y += w34Lines.length * 5 + 12;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(56, 161, 105);
+        doc.text("Week 5+: Full Practice Papers & Refinement", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        const w5Lines = doc.splitTextToSize(
+          "Attempt full past papers under exam conditions. Review your answers against mark schemes, paying attention to command words and required depth of explanation. Focus on synoptic links between topics and multi-step calculations.",
+          contentW - 8
+        );
+        doc.text(w5Lines, margin + 4, y);
+        y += w5Lines.length * 5 + 14;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.text("General Study Tips", margin, y);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+
+        const tips = [
+          "Use active recall and spaced repetition to strengthen long-term memory.",
+          "Create concept maps linking related topics (e.g., Forces \u2192 Energy \u2192 Momentum).",
+          "Practise calculations with full working, including units at every step.",
+          "Review the AQA specification checklist to ensure complete coverage.",
+          "Form study groups to explain concepts to peers \u2014 teaching deepens understanding.",
+          "Consult your teacher for targeted support on persistent problem areas."
+        ];
+
+        tips.forEach((tip) => {
+          if (y > 270) {
+            doc.addPage();
+            y = 20;
+          }
+          doc.text("\u2022  " + tip, margin + 4, y);
+          y += 7;
+        });
+
+        // Footer on each page
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(160, 174, 192);
+          doc.text("AQA A-Level Physics Foundation Tier Diagnostic | Generated " + today, margin, 290);
+          doc.text("Page " + i + " of " + totalPages, pageW - margin - 25, 290);
+        }
+
+        doc.save("AQA_Physics_Diagnostic_" + studentName.replace(/\s+/g, "_") + ".pdf");
+      };
+
+      return (
+        <div className="results-screen">
+          <div className="results-header">
+            <h1>Assessment Complete</h1>
+            <p style={{ color: "#718096" }}>Results for {studentName}</p>
+          </div>
+
+          {/* Score Display */}
+          <div className="score-display">
+            <div className="score-big" style={{ color: getScoreColor(overallPct) }}>
+              {overallPct}%
+            </div>
+            <div className="score-label">{totalCorrect} out of {questionBank.length} correct</div>
+            <div className="score-bar-container">
+              <div
+                className="score-bar-fill"
+                style={{ width: overallPct + "%", background: getScoreColor(overallPct) }}
+              />
+            </div>
+            <div className="score-assessment" style={{ background: getScoreColor(overallPct) + "18", color: getScoreColor(overallPct) }}>
+              {assessmentText}
+            </div>
+          </div>
+
+          {/* Category Summary */}
+          <div className="category-summary">
+            <div className="category-card">
+              <div className="count" style={{ color: "#e53e3e" }}>{urgentCount}</div>
+              <div className="label" style={{ color: "#e53e3e" }}>Urgent</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>Below 60%</div>
+            </div>
+            <div className="category-card">
+              <div className="count" style={{ color: "#d69e2e" }}>{reviewCount}</div>
+              <div className="label" style={{ color: "#d69e2e" }}>Review</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>60% - 80%</div>
+            </div>
+            <div className="category-card">
+              <div className="count" style={{ color: "#38a169" }}>{confidentCount}</div>
+              <div className="label" style={{ color: "#38a169" }}>Confident</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>Above 80%</div>
+            </div>
+          </div>
+
+          {/* Top 5 Weakest Topics */}
+          <div className="topic-results">
+            <h2>Top 5 Priority Topics</h2>
+            {weakest5.map((t) => (
+              <div className="topic-bar-item" key={t.topic}>
+                <div className="topic-bar-label">
+                  <span className="topic-bar-name">
+                    {t.topic}
+                    <span
+                      className={"status-badge " + "status-" + t.category.label.toLowerCase()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      {t.category.label}
+                    </span>
+                  </span>
+                  <span className="topic-bar-score">{t.correct}/{t.total} ({t.pct}%)</span>
+                </div>
+                <div className="topic-bar-track">
+                  <div
+                    className="topic-bar-fill"
+                    style={{ width: t.pct + "%", background: t.category.color }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* All Topics */}
+          <div className="topic-results">
+            <h2>All Topics (Ranked by Priority)</h2>
+            {topicData.map((t) => (
+              <div className="topic-bar-item" key={t.topic}>
+                <div className="topic-bar-label">
+                  <span className="topic-bar-name">
+                    {t.topic}
+                    <span
+                      className={"status-badge " + "status-" + t.category.label.toLowerCase()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      {t.category.label}
+                    </span>
+                  </span>
+                  <span className="topic-bar-score">{t.correct}/{t.total} ({t.pct}%)</span>
+                </div>
+                <div className="topic-bar-track">
+                  <div
+                    className="topic-bar-fill"
+                    style={{ width: t.pct + "%", background: t.category.color }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="results-actions">
+            <button className="btn btn-primary" onClick={generatePDF}>
+              Download PDF Report
+            </button>
+            <button className="btn btn-secondary" onClick={onRetake}>
+              Retake Assessment
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // APP COMPONENT
+    // =========================================================================
+    function App() {
+      const [screen, setScreen] = useState("welcome");
+      const [studentName, setStudentName] = useState("");
+      const [answers, setAnswers] = useState({});
+
+      const handleStart = (name) => {
+        setStudentName(name);
+        setScreen("quiz");
+      };
+
+      const handleSubmit = (ans) => {
+        setAnswers(ans);
+        setScreen("results");
+        window.scrollTo(0, 0);
+      };
+
+      const handleRetake = () => {
+        setAnswers({});
+        setScreen("quiz");
+        window.scrollTo(0, 0);
+      };
+
+      return (
+        <div className="app-container">
+          {screen === "welcome" && <WelcomeScreen onStart={handleStart} />}
+          {screen === "quiz" && <QuizScreen studentName={studentName} onSubmit={handleSubmit} />}
+          {screen === "results" && (
+            <ResultsScreen studentName={studentName} answers={answers} onRetake={handleRetake} />
+          )}
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // RENDER
+    // =========================================================================
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
