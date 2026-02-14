@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AQA A-Level Physics (7408) Diagnostic Centre - Identify your strengths and weaknesses with targeted diagnostic assessments covering the full AQA specification.">
+    <title>AQA A-Level Physics Diagnostic Centre</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+                Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3, h4 {
+            line-height: 1.25;
+            color: #1a365d;
+        }
+
+        h1 { font-size: 2.5rem; font-weight: 800; }
+        h2 { font-size: 1.85rem; font-weight: 700; }
+        h3 { font-size: 1.35rem; font-weight: 600; }
+        h4 { font-size: 1.1rem; font-weight: 600; }
+
+        p { margin-bottom: 1rem; }
+
+        a {
+            color: #2b6cb0;
+            text-decoration: none;
+        }
+
+        a:focus-visible {
+            outline: 3px solid #63b3ed;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 4rem 0;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 60%, #3182ce 100%);
+            color: #ffffff;
+            padding: 5rem 0 4.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.015) 40px,
+                    rgba(255, 255, 255, 0.015) 41px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 255, 255, 0.015) 40px,
+                    rgba(255, 255, 255, 0.015) 41px
+                );
+            pointer-events: none;
+        }
+
+        /* Decorative sine-wave SVG overlay */
+        .hero::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C360,60 720,0 1080,30 C1260,45 1350,30 1440,30 L1440,60 L0,60 Z' fill='%23f7fafc'/%3E%3C/svg%3E") no-repeat bottom;
+            background-size: cover;
+            pointer-events: none;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: #ffffff;
+            font-size: 2.75rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-spec-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 999px;
+            padding: 0.35rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            color: #bee3f8;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #bee3f8;
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-formulae {
+            font-family: "Georgia", "Times New Roman", Times, serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.1em;
+            margin-top: 2rem;
+            user-select: none;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hero-cta--primary {
+            background: #ffffff;
+            color: #1a365d;
+        }
+
+        .hero-cta--secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-header {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .section-header h2 {
+            margin-bottom: 0.75rem;
+        }
+
+        .section-header p {
+            color: #718096;
+            font-size: 1.05rem;
+        }
+
+        .section-divider {
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #2b6cb0, #63b3ed);
+            border: none;
+            border-radius: 2px;
+            margin: 1rem auto 0;
+        }
+
+        /* ===== ABOUT SECTION ===== */
+        .about {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .about-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.75rem;
+        }
+
+        .about-card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ebf8ff, #bee3f8);
+            border-radius: 10px;
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+            color: #2b6cb0;
+        }
+
+        .about-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #1a365d;
+        }
+
+        .about-card p {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-bottom: 0;
+        }
+
+        /* ===== QUIZ CARDS SECTION ===== */
+        .quizzes {
+            padding-bottom: 5rem;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border-radius: 16px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .quiz-card-link:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(26, 54, 93, 0.12), 0 8px 16px rgba(26, 54, 93, 0.08);
+        }
+
+        .quiz-card-link:focus-visible {
+            outline: 3px solid #63b3ed;
+            outline-offset: 4px;
+        }
+
+        .quiz-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quiz-card-header {
+            padding: 1.75rem 1.75rem 1.25rem;
+            color: #ffffff;
+        }
+
+        .quiz-card--foundation .quiz-card-header {
+            background: linear-gradient(135deg, #2b6cb0 0%, #3182ce 100%);
+        }
+
+        .quiz-card--higher .quiz-card-header {
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+        }
+
+        .quiz-card-tier-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+            margin-bottom: 0.75rem;
+        }
+
+        .quiz-card-header h3 {
+            color: #ffffff;
+            font-size: 1.4rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .quiz-card-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .quiz-card-body {
+            padding: 1.75rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quiz-card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
+
+        .quiz-stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a365d;
+            line-height: 1.2;
+        }
+
+        .quiz-stat-label {
+            font-size: 0.78rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 600;
+        }
+
+        .quiz-card-topics {
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-card-topics h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #718096;
+            margin-bottom: 0.6rem;
+        }
+
+        .quiz-card-topic-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .quiz-card-topic-list li {
+            font-size: 0.8rem;
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+
+        .quiz-card-recommended {
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #2c5282;
+        }
+
+        .quiz-card-recommended strong {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.15rem;
+            color: #2b6cb0;
+        }
+
+        .quiz-card-cta {
+            display: block;
+            text-align: center;
+            padding: 0.9rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: auto;
+            transition: background 0.2s ease;
+        }
+
+        .quiz-card--foundation .quiz-card-cta {
+            background: #2b6cb0;
+        }
+
+        .quiz-card--foundation .quiz-card-cta:hover {
+            background: #2c5282;
+        }
+
+        .quiz-card--higher .quiz-card-cta {
+            background: #1a365d;
+        }
+
+        .quiz-card--higher .quiz-card-cta:hover {
+            background: #153e75;
+        }
+
+        .quiz-card-cta-arrow {
+            margin-left: 0.5rem;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .quiz-card-link:hover .quiz-card-cta-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ===== HOW IT WORKS SECTION ===== */
+        .how-it-works {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 2rem 1.25rem;
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            color: #ffffff;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+        }
+
+        .step-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            color: #1a365d;
+        }
+
+        .step-card p {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 0;
+        }
+
+        /* Arrow connector between steps */
+        .step-card:not(:last-child)::after {
+            content: "\2192";
+            position: absolute;
+            right: -0.85rem;
+            top: 2.25rem;
+            font-size: 1.25rem;
+            color: #cbd5e0;
+            font-weight: 700;
+        }
+
+        /* ===== ADVICE SECTION ===== */
+        .advice {
+            padding: 4rem 0 4.5rem;
+        }
+
+        .advice-list {
+            max-width: 780px;
+            margin: 0 auto;
+            list-style: none;
+        }
+
+        .advice-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.1rem 1.25rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .advice-item:hover {
+            border-color: #bee3f8;
+        }
+
+        .advice-check {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 0.1rem;
+        }
+
+        .advice-item p {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-bottom: 0;
+        }
+
+        .advice-item strong {
+            color: #1a365d;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: #1a365d;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 2.5rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .footer-spec {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .footer-year {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .quiz-grid {
+                grid-template-columns: 1fr;
+                max-width: 540px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .steps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .step-card:not(:last-child)::after {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            section {
+                padding: 3rem 0;
+            }
+
+            .hero {
+                padding: 3.5rem 0 3rem;
+            }
+
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.05rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                max-width: 360px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-card-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-cta-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-cta {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .hero-formulae {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== HERO ==================== -->
+    <header class="hero" role="banner">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-spec-badge">AQA 7408 Specification</span>
+                <h1>AQA A-Level Physics<br>Diagnostic Centre</h1>
+                <p class="hero-subtitle">
+                    Pinpoint your strengths and weaknesses across the full AQA A-Level Physics specification.
+                    Targeted diagnostics designed to help you focus your revision where it matters most.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="#assessments" class="hero-cta hero-cta--primary">View Assessments</a>
+                    <a href="#how-it-works" class="hero-cta hero-cta--secondary">How It Works</a>
+                </div>
+                <p class="hero-formulae" aria-hidden="true">
+                    F = ma &nbsp;&middot;&nbsp; E = hf &nbsp;&middot;&nbsp; V = IR &nbsp;&middot;&nbsp; p = mv &nbsp;&middot;&nbsp; PV = nRT &nbsp;&middot;&nbsp; E = mc&sup2;
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== ABOUT ==================== -->
+    <section class="about" aria-labelledby="about-heading">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="about-heading">What Are These Diagnostics?</h2>
+                <p>
+                    Comprehensive assessments designed to give you a clear picture of
+                    exactly where you stand across the AQA A-Level Physics course.
+                </p>
+                <hr class="section-divider">
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-card-icon" aria-hidden="true">&#9670;</div>
+                    <h3>Full Specification Coverage</h3>
+                    <p>
+                        Based on the latest AQA 7408 specification, covering all core sections
+                        (3.1&ndash;3.8) and optional topics (3.9&ndash;3.13). Every major area
+                        of the syllabus is assessed so nothing is overlooked.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <div class="about-card-icon" aria-hidden="true">&#9733;</div>
+                    <h3>Exam-Quality Questions</h3>
+                    <p>
+                        Each question covers calculations, conceptual understanding, and
+                        the application of physics principles &mdash; mirroring the style and
+                        rigour of actual AQA examination papers.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <div class="about-card-icon" aria-hidden="true">&#9881;</div>
+                    <h3>Pinpoint Your Weaknesses</h3>
+                    <p>
+                        The aim is targeted exam preparation. Identify exactly where to focus
+                        your revision time so that every hour of study delivers maximum
+                        improvement to your grade.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <div class="about-card-icon" aria-hidden="true">&#9776;</div>
+                    <h3>Personalised Revision Plan</h3>
+                    <p>
+                        Every diagnostic generates a detailed PDF report with a topic-by-topic
+                        breakdown and a personalised 4-week revision action plan tailored to
+                        your results.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== QUIZ CARDS ==================== -->
+    <section class="quizzes" id="assessments" aria-labelledby="quizzes-heading">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="quizzes-heading">Choose Your Assessment</h2>
+                <p>
+                    Select the tier that matches your current stage of study. You can always
+                    come back and take the other one later.
+                </p>
+                <hr class="section-divider">
+            </div>
+
+            <div class="quiz-grid">
+
+                <!-- Foundation Tier Card -->
+                <a href="physics_foundation_tier.html" class="quiz-card-link" aria-label="Start the Foundation Tier diagnostic assessment - 74 questions, 45 to 60 minutes">
+                    <article class="quiz-card quiz-card--foundation">
+                        <div class="quiz-card-header">
+                            <span class="quiz-card-tier-label">Foundation Tier</span>
+                            <h3>Core Physics Diagnostic</h3>
+                            <p>AQA Sections 3.1 &ndash; 3.8</p>
+                        </div>
+                        <div class="quiz-card-body">
+                            <div class="quiz-card-stats">
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">74</span>
+                                    <span class="quiz-stat-label">Questions</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">13</span>
+                                    <span class="quiz-stat-label">Topics</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">45&ndash;60</span>
+                                    <span class="quiz-stat-label">Minutes</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">Core</span>
+                                    <span class="quiz-stat-label">Coverage</span>
+                                </div>
+                            </div>
+
+                            <div class="quiz-card-topics">
+                                <h4>Topics Covered</h4>
+                                <ul class="quiz-card-topic-list">
+                                    <li>Kinematics</li>
+                                    <li>Forces</li>
+                                    <li>Energy</li>
+                                    <li>Momentum</li>
+                                    <li>Circular Motion</li>
+                                    <li>Materials</li>
+                                    <li>Waves</li>
+                                    <li>Electricity</li>
+                                    <li>Thermal Physics</li>
+                                    <li>Gravitational Fields</li>
+                                    <li>Electric Fields</li>
+                                    <li>Magnetic Fields</li>
+                                    <li>Particles &amp; Radiation</li>
+                                </ul>
+                            </div>
+
+                            <div class="quiz-card-recommended">
+                                <strong>Recommended for</strong>
+                                AS students, Year 12 students, or as a baseline assessment for any student
+                            </div>
+
+                            <span class="quiz-card-cta" role="presentation">
+                                Start Assessment <span class="quiz-card-cta-arrow" aria-hidden="true">&#8594;</span>
+                            </span>
+                        </div>
+                    </article>
+                </a>
+
+                <!-- Higher Tier Card -->
+                <a href="physics_higher_tier.html" class="quiz-card-link" aria-label="Start the Higher Tier diagnostic assessment - 135 questions, 75 to 90 minutes">
+                    <article class="quiz-card quiz-card--higher">
+                        <div class="quiz-card-header">
+                            <span class="quiz-card-tier-label">Higher Tier</span>
+                            <h3>Comprehensive Physics Diagnostic</h3>
+                            <p>All Core Topics + Optional Modules</p>
+                        </div>
+                        <div class="quiz-card-body">
+                            <div class="quiz-card-stats">
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">135</span>
+                                    <span class="quiz-stat-label">Questions</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">21</span>
+                                    <span class="quiz-stat-label">Topics</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">75&ndash;90</span>
+                                    <span class="quiz-stat-label">Minutes</span>
+                                </div>
+                                <div class="quiz-stat">
+                                    <span class="quiz-stat-number">Full</span>
+                                    <span class="quiz-stat-label">Coverage</span>
+                                </div>
+                            </div>
+
+                            <div class="quiz-card-topics">
+                                <h4>All Foundation Topics Plus</h4>
+                                <ul class="quiz-card-topic-list">
+                                    <li>SHM</li>
+                                    <li>Astrophysics</li>
+                                    <li>Medical Physics</li>
+                                    <li>Nuclear Physics</li>
+                                    <li>Alternating Current</li>
+                                    <li>Further Mechanics</li>
+                                    <li>Optics</li>
+                                    <li>Quantum Physics</li>
+                                </ul>
+                            </div>
+
+                            <div class="quiz-card-recommended">
+                                <strong>Recommended for</strong>
+                                Full A-Level students, Year 13 students, or for comprehensive revision across the entire specification
+                            </div>
+
+                            <span class="quiz-card-cta" role="presentation">
+                                Start Assessment <span class="quiz-card-cta-arrow" aria-hidden="true">&#8594;</span>
+                            </span>
+                        </div>
+                    </article>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="how-it-works" id="how-it-works" aria-labelledby="how-heading">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="how-heading">How It Works</h2>
+                <p>
+                    Four simple steps from start to a personalised revision strategy.
+                </p>
+                <hr class="section-divider">
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number" aria-hidden="true">1</div>
+                    <h3>Choose Your Tier</h3>
+                    <p>
+                        Pick the Foundation Tier for core topics or the Higher Tier for
+                        full A-Level coverage including optional modules.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number" aria-hidden="true">2</div>
+                    <h3>Answer at Your Pace</h3>
+                    <p>
+                        Work through every question with no time limit. Take as long as
+                        you need &mdash; accuracy matters more than speed here.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number" aria-hidden="true">3</div>
+                    <h3>Review Your Results</h3>
+                    <p>
+                        See a detailed topic-by-topic breakdown of your performance,
+                        highlighting strengths and areas that need attention.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number" aria-hidden="true">4</div>
+                    <h3>Download Your Plan</h3>
+                    <p>
+                        Get a personalised PDF revision plan with a structured
+                        4-week schedule tailored to your diagnostic results.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ADVICE ==================== -->
+    <section class="advice" aria-labelledby="advice-heading">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="advice-heading">Advice for Students</h2>
+                <p>
+                    Make the most of your diagnostic results with these tips from experienced physics educators.
+                </p>
+                <hr class="section-divider">
+            </div>
+
+            <ul class="advice-list">
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Start with the Foundation Tier to establish a baseline</strong> &mdash;
+                        even if you are a Year 13 student. It ensures your fundamentals are solid before
+                        tackling the more advanced material.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Be honest with yourself.</strong>
+                        Do not guess randomly. Mark only what you genuinely know. The diagnostic
+                        is only useful if it reflects your true understanding.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Use the PDF report to structure your revision.</strong>
+                        Focus on topics flagged as URGENT first. These represent the areas
+                        where targeted work will have the greatest impact on your grade.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Retake the diagnostic every 2&ndash;3 weeks</strong> to track your
+                        improvement. Watching your scores rise is both motivating and a reliable
+                        measure of genuine progress.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Pair your diagnostic results with past paper practice.</strong>
+                        Once you know which topics need work, use AQA past papers to
+                        practise those areas under exam conditions for the best results.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Do not just memorise &mdash; aim to understand.</strong>
+                        Physics rewards deep understanding. For every answer you got wrong,
+                        work through the underlying principles until the concept clicks.
+                    </p>
+                </li>
+                <li class="advice-item">
+                    <span class="advice-check" aria-hidden="true">&#10003;</span>
+                    <p>
+                        <strong>Share your results with your teacher.</strong>
+                        Your diagnostic report gives teachers the information they need to
+                        provide targeted, personalised support exactly where you need it.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <p class="footer-spec">Based on the AQA A-Level Physics (7408) Specification</p>
+            <p class="footer-year">&copy; 2025 AQA A-Level Physics Diagnostic Centre</p>
+        </div>
+    </footer>
+
+</body>
+</html>
