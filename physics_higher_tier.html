@@ -1,0 +1,3436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQA A-Level Physics - Higher Tier Diagnostic Assessment</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+            background: #f7fafc;
+            color: #2d3748;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .welcome-card h1 {
+            font-size: 2rem;
+            color: #1a365d;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .welcome-card .tier-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .welcome-card p {
+            color: #4a5568;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .welcome-card .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #2b6cb0;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .welcome-card .info-box p {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            color: #2c5282;
+        }
+
+        .welcome-card .info-box strong {
+            color: #1a365d;
+        }
+
+        .welcome-card .student-input {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .welcome-card .student-input label {
+            font-weight: 600;
+            color: #1a365d;
+            font-size: 0.95rem;
+        }
+
+        .welcome-card .student-input input {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .welcome-card .student-input input:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 54, 93, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1a365d;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #276749, #38a169);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #9b2c2c, #e53e3e);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .quiz-header h2 {
+            font-size: 1.25rem;
+            color: #1a365d;
+            margin-bottom: 4px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .progress-bar-track {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2b6cb0, #38a169);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* Quiz Card */
+        .quiz-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-topic {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .badge-basic {
+            background: #f0fff4;
+            color: #38a169;
+        }
+
+        .badge-intermediate {
+            background: #fffff0;
+            color: #d69e2e;
+        }
+
+        .badge-advanced {
+            background: #fff5f5;
+            color: #e53e3e;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            color: #1a365d;
+            margin-bottom: 24px;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 1rem;
+            font-family: inherit;
+            color: #2d3748;
+            min-height: 44px;
+        }
+
+        .option-btn:hover {
+            border-color: #2b6cb0;
+            background: #ebf8ff;
+        }
+
+        .option-btn.selected {
+            border-color: #2b6cb0;
+            background: #ebf8ff;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+        }
+
+        .option-btn.correct {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .option-btn.incorrect {
+            border-color: #e53e3e;
+            background: #fff5f5;
+        }
+
+        .option-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #4a5568;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .option-btn.selected .option-letter {
+            background: #2b6cb0;
+            color: white;
+        }
+
+        .option-btn.correct .option-letter {
+            background: #38a169;
+            color: white;
+        }
+
+        .option-btn.incorrect .option-letter {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* Quiz Navigation */
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quiz-nav .btn {
+            flex: 0 0 auto;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Question Grid Toggle */
+        .question-grid-toggle {
+            background: none;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            min-height: 44px;
+        }
+
+        .question-grid-toggle:hover {
+            border-color: #2b6cb0;
+            color: #2b6cb0;
+        }
+
+        /* Question Grid */
+        .question-grid {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .question-grid h3 {
+            font-size: 1rem;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+            gap: 8px;
+        }
+
+        .grid-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a5568;
+        }
+
+        .grid-item:hover {
+            border-color: #2b6cb0;
+            background: #ebf8ff;
+        }
+
+        .grid-item.current {
+            border-color: #2b6cb0;
+            background: #2b6cb0;
+            color: white;
+        }
+
+        .grid-item.answered {
+            border-color: #38a169;
+            background: #f0fff4;
+            color: #38a169;
+        }
+
+        .grid-item.flagged {
+            border-color: #d69e2e;
+            background: #fffff0;
+            color: #d69e2e;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            background: #ebf8ff;
+            border-left: 4px solid #2b6cb0;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+        }
+
+        .explanation-box h4 {
+            color: #1a365d;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .explanation-box p {
+            color: #2c5282;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            padding: 20px 0;
+        }
+
+        .results-header {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .results-header h2 {
+            font-size: 1.75rem;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+
+        .results-header p {
+            color: #4a5568;
+            font-size: 1.05rem;
+        }
+
+        .score-display {
+            margin: 32px 0;
+        }
+
+        .score-big {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #1a365d;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-top: 8px;
+        }
+
+        .score-bar-container {
+            max-width: 400px;
+            margin: 24px auto 0;
+        }
+
+        .score-bar-fill {
+            height: 12px;
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+
+        .score-assessment {
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 16px;
+        }
+
+        .score-assessment.excellent {
+            background: #f0fff4;
+            color: #276749;
+        }
+
+        .score-assessment.good {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .score-assessment.satisfactory {
+            background: #fffff0;
+            color: #d69e2e;
+        }
+
+        .score-assessment.needs-work {
+            background: #fff5f5;
+            color: #e53e3e;
+        }
+
+        /* Topic Results */
+        .topic-results {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .topic-results h3 {
+            font-size: 1.25rem;
+            color: #1a365d;
+            margin-bottom: 20px;
+        }
+
+        .topic-bar-item {
+            margin-bottom: 16px;
+        }
+
+        .topic-bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .topic-bar-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .topic-bar-score {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .topic-bar-track {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .topic-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.8s ease;
+        }
+
+        /* Category Summary */
+        .category-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .category-card h4 {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-card .cat-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1a365d;
+        }
+
+        .category-card .cat-detail {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+
+        /* Results Actions */
+        .results-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.mastered {
+            background: #f0fff4;
+            color: #276749;
+        }
+
+        .status-badge.developing {
+            background: #fffff0;
+            color: #975a16;
+        }
+
+        .status-badge.focus {
+            background: #fff5f5;
+            color: #9b2c2c;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .review-section h3 {
+            font-size: 1.25rem;
+            color: #1a365d;
+            margin-bottom: 20px;
+        }
+
+        .review-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .review-item.correct-review {
+            border-left: 4px solid #38a169;
+        }
+
+        .review-item.incorrect-review {
+            border-left: 4px solid #e53e3e;
+        }
+
+        .review-question {
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+
+        .review-answer {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+
+        .review-answer.correct-answer {
+            color: #276749;
+        }
+
+        .review-answer.wrong-answer {
+            color: #9b2c2c;
+        }
+
+        /* Timer */
+        .timer-display {
+            font-size: 0.95rem;
+            color: #4a5568;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-display.warning {
+            color: #d69e2e;
+        }
+
+        .timer-display.danger {
+            color: #e53e3e;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 12px;
+            }
+
+            .welcome-card {
+                padding: 32px 24px;
+            }
+
+            .welcome-card h1 {
+                font-size: 1.5rem;
+            }
+
+            .quiz-card {
+                padding: 24px 20px;
+            }
+
+            .question-text {
+                font-size: 1.05rem;
+            }
+
+            .results-header {
+                padding: 28px 20px;
+            }
+
+            .score-big {
+                font-size: 3rem;
+            }
+
+            .quiz-nav {
+                flex-direction: column;
+            }
+
+            .quiz-nav .btn {
+                width: 100%;
+            }
+
+            .nav-center {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .category-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .results-actions {
+                flex-direction: column;
+            }
+
+            .results-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .category-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .quiz-nav, .question-grid-toggle, .question-grid, .results-actions {
+                display: none;
+            }
+
+            .quiz-card, .results-header, .topic-results, .review-section {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo, useRef } = React;
+
+    const questions = [
+        {
+            id: 1,
+            topic: "Kinematics",
+            difficulty: "Basic",
+            question: "A car accelerates uniformly from rest to 20 m/s in 8.0 s. What is its acceleration?",
+            options: [
+                "1.5 m/s\u00B2",
+                "2.0 m/s\u00B2",
+                "2.5 m/s\u00B2",
+                "3.0 m/s\u00B2"
+            ],
+            correctAnswer: 2,
+            explanation: "Using a = (v \u2212 u) / t = (20 \u2212 0) / 8.0 = 2.5 m/s\u00B2. The car starts from rest (u = 0), so the acceleration is simply the final velocity divided by the time taken."
+        },
+        {
+            id: 2,
+            topic: "Kinematics",
+            difficulty: "Basic",
+            question: "What does the gradient of a displacement\u2013time graph represent?",
+            options: [
+                "Acceleration",
+                "Velocity",
+                "Force",
+                "Distance"
+            ],
+            correctAnswer: 1,
+            explanation: "The gradient (slope) of a displacement\u2013time graph gives the rate of change of displacement with respect to time, which is the definition of velocity."
+        },
+        {
+            id: 3,
+            topic: "Kinematics",
+            difficulty: "Intermediate",
+            question: "A ball is thrown vertically upward with an initial velocity of 15 m/s. What is the maximum height reached? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "9.2 m",
+                "10.8 m",
+                "11.5 m",
+                "13.0 m"
+            ],
+            correctAnswer: 2,
+            explanation: "At maximum height, v = 0. Using v\u00B2 = u\u00B2 \u2212 2gs: 0 = 15\u00B2 \u2212 2(9.8)s, so s = 225 / 19.6 = 11.48 \u2248 11.5 m."
+        },
+        {
+            id: 4,
+            topic: "Kinematics",
+            difficulty: "Intermediate",
+            question: "A stone is dropped from rest from the top of a cliff and takes 3.0 s to reach the ground. What is the height of the cliff? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "29.4 m",
+                "35.0 m",
+                "44.1 m",
+                "52.8 m"
+            ],
+            correctAnswer: 2,
+            explanation: "Using s = ut + \u00BDgt\u00B2 with u = 0: s = \u00BD \u00D7 9.8 \u00D7 3.0\u00B2 = \u00BD \u00D7 9.8 \u00D7 9.0 = 44.1 m."
+        },
+        {
+            id: 5,
+            topic: "Kinematics",
+            difficulty: "Intermediate",
+            question: "A projectile is launched horizontally at 12 m/s from the top of a 45 m high building. How long does it take to hit the ground? (Take g = 10 m/s\u00B2)",
+            options: [
+                "2.0 s",
+                "2.5 s",
+                "3.0 s",
+                "3.75 s"
+            ],
+            correctAnswer: 2,
+            explanation: "Vertical motion is independent of horizontal motion. Using s = \u00BDgt\u00B2 (starting from rest vertically): 45 = \u00BD \u00D7 10 \u00D7 t\u00B2, so t\u00B2 = 9.0, giving t = 3.0 s."
+        },
+        {
+            id: 6,
+            topic: "Kinematics",
+            difficulty: "Basic",
+            question: "What does the area under a velocity\u2013time graph represent?",
+            options: [
+                "Acceleration",
+                "Force",
+                "Displacement",
+                "Speed"
+            ],
+            correctAnswer: 2,
+            explanation: "The area under a velocity\u2013time graph represents displacement. This follows from the fact that displacement equals the integral of velocity with respect to time."
+        },
+        {
+            id: 7,
+            topic: "Forces",
+            difficulty: "Basic",
+            question: "Newton's first law states that an object will remain at rest or continue to move at constant velocity unless acted upon by what?",
+            options: [
+                "Gravity",
+                "Friction",
+                "A resultant force",
+                "An equal and opposite force"
+            ],
+            correctAnswer: 2,
+            explanation: "Newton's first law states that an object remains at rest or in uniform motion in a straight line unless acted upon by a resultant (net) force. Individual forces may act, but only an unbalanced resultant force causes a change in motion."
+        },
+        {
+            id: 8,
+            topic: "Forces",
+            difficulty: "Basic",
+            question: "A 25 kg box is pushed along a frictionless surface with a resultant force of 50 N. What is the acceleration of the box?",
+            options: [
+                "1.0 m/s\u00B2",
+                "2.0 m/s\u00B2",
+                "2.5 m/s\u00B2",
+                "5.0 m/s\u00B2"
+            ],
+            correctAnswer: 1,
+            explanation: "Using Newton's second law, F = ma: a = F / m = 50 / 25 = 2.0 m/s\u00B2."
+        },
+        {
+            id: 9,
+            topic: "Forces",
+            difficulty: "Intermediate",
+            question: "A 5.0 kg mass hangs in equilibrium from two strings, each making an angle of 30\u00B0 to the horizontal. What is the tension in each string? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "24.5 N",
+                "28.3 N",
+                "42.4 N",
+                "49.0 N"
+            ],
+            correctAnswer: 3,
+            explanation: "Resolving vertically: 2T sin 30\u00B0 = mg, so 2T \u00D7 0.5 = 5.0 \u00D7 9.8 = 49.0 N. Therefore T = 49.0 / 1.0 = 49.0 N."
+        },
+        {
+            id: 10,
+            topic: "Forces",
+            difficulty: "Intermediate",
+            question: "A book of weight 15 N rests on a table. According to Newton's third law, what is the reaction force to the book's weight pushing down on the table?",
+            options: [
+                "The table pushes up on the book with 15 N (normal contact force)",
+                "The book pulls the Earth upward with 15 N (gravitational force)",
+                "The table pushes down on the floor with 15 N",
+                "The book pushes down on the table with 15 N"
+            ],
+            correctAnswer: 0,
+            explanation: "Newton's third law: the table exerts a normal contact force of 15 N upward on the book in response to the book pressing down on the table with 15 N. These are equal and opposite forces acting on different objects in the same interaction."
+        },
+        {
+            id: 11,
+            topic: "Forces",
+            difficulty: "Intermediate",
+            question: "A 3.0 kg object is placed on a smooth inclined plane at 30\u00B0 to the horizontal. What is the acceleration of the object down the slope? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "3.3 m/s\u00B2",
+                "4.9 m/s\u00B2",
+                "5.7 m/s\u00B2",
+                "8.5 m/s\u00B2"
+            ],
+            correctAnswer: 1,
+            explanation: "On a smooth (frictionless) incline, the component of gravitational acceleration along the slope is g sin \u03B8 = 9.8 \u00D7 sin 30\u00B0 = 9.8 \u00D7 0.5 = 4.9 m/s\u00B2. The mass cancels out."
+        },
+        {
+            id: 12,
+            topic: "Forces",
+            difficulty: "Intermediate",
+            question: "Two forces of 8 N and 6 N act at right angles to each other on an object. What is the magnitude of the resultant force?",
+            options: [
+                "7 N",
+                "10 N",
+                "12 N",
+                "14 N"
+            ],
+            correctAnswer: 1,
+            explanation: "Using Pythagoras' theorem for perpendicular forces: R = \u221A(8\u00B2 + 6\u00B2) = \u221A(64 + 36) = \u221A100 = 10 N."
+        },
+        {
+            id: 13,
+            topic: "Energy",
+            difficulty: "Basic",
+            question: "An 80 kg person climbs a staircase of vertical height 12 m. How much gravitational potential energy do they gain? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "960 J",
+                "7840 J",
+                "9408 J",
+                "11,520 J"
+            ],
+            correctAnswer: 2,
+            explanation: "GPE = mgh = 80 \u00D7 9.8 \u00D7 12 = 9408 J."
+        },
+        {
+            id: 14,
+            topic: "Energy",
+            difficulty: "Basic",
+            question: "What is the SI unit of power?",
+            options: [
+                "Joule (J)",
+                "Newton (N)",
+                "Watt (W)",
+                "Pascal (Pa)"
+            ],
+            correctAnswer: 2,
+            explanation: "Power is the rate of energy transfer or the rate of doing work. Its SI unit is the watt (W), where 1 W = 1 J/s."
+        },
+        {
+            id: 15,
+            topic: "Energy",
+            difficulty: "Intermediate",
+            question: "A car of mass 1200 kg is travelling at 25 m/s. What is its kinetic energy?",
+            options: [
+                "30,000 J",
+                "187,500 J",
+                "375,000 J",
+                "750,000 J"
+            ],
+            correctAnswer: 2,
+            explanation: "KE = \u00BDmv\u00B2 = \u00BD \u00D7 1200 \u00D7 25\u00B2 = \u00BD \u00D7 1200 \u00D7 625 = 375,000 J."
+        },
+        {
+            id: 16,
+            topic: "Energy",
+            difficulty: "Intermediate",
+            question: "An electric motor lifts a 200 kg load through a height of 15 m in 30 s. What is the useful power output of the motor? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "100 W",
+                "490 W",
+                "980 W",
+                "1470 W"
+            ],
+            correctAnswer: 2,
+            explanation: "Work done = mgh = 200 \u00D7 9.8 \u00D7 15 = 29,400 J. Power = Work / time = 29,400 / 30 = 980 W."
+        },
+        {
+            id: 17,
+            topic: "Energy",
+            difficulty: "Intermediate",
+            question: "A machine has an energy input of 5000 J and produces a useful energy output of 3500 J. What is the efficiency of the machine?",
+            options: [
+                "30%",
+                "50%",
+                "65%",
+                "70%"
+            ],
+            correctAnswer: 3,
+            explanation: "Efficiency = (useful output / total input) \u00D7 100% = (3500 / 5000) \u00D7 100% = 70%."
+        },
+        {
+            id: 18,
+            topic: "Energy",
+            difficulty: "Intermediate",
+            question: "A 0.50 kg ball is dropped from a height of 20 m. What is its speed just before hitting the ground? (Take g = 10 m/s\u00B2, ignore air resistance)",
+            options: [
+                "10 m/s",
+                "14 m/s",
+                "20 m/s",
+                "28 m/s"
+            ],
+            correctAnswer: 2,
+            explanation: "Using conservation of energy: mgh = \u00BDmv\u00B2, so v = \u221A(2gh) = \u221A(2 \u00D7 10 \u00D7 20) = \u221A400 = 20 m/s. Note that mass cancels out."
+        },
+        {
+            id: 19,
+            topic: "Momentum",
+            difficulty: "Basic",
+            question: "What is the momentum of a 1500 kg car travelling at 20 m/s?",
+            options: [
+                "15,000 kg m/s",
+                "30,000 kg m/s",
+                "45,000 kg m/s",
+                "75,000 kg m/s"
+            ],
+            correctAnswer: 1,
+            explanation: "Momentum p = mv = 1500 \u00D7 20 = 30,000 kg m/s."
+        },
+        {
+            id: 20,
+            topic: "Momentum",
+            difficulty: "Intermediate",
+            question: "A 2.0 kg trolley moving at 3.0 m/s collides with a stationary 1.0 kg trolley. They stick together after the collision. What is their final velocity?",
+            options: [
+                "1.0 m/s",
+                "1.5 m/s",
+                "2.0 m/s",
+                "3.0 m/s"
+            ],
+            correctAnswer: 2,
+            explanation: "By conservation of momentum: m\u2081u\u2081 + m\u2082u\u2082 = (m\u2081 + m\u2082)v. So 2.0 \u00D7 3.0 + 1.0 \u00D7 0 = (2.0 + 1.0) \u00D7 v. Therefore 6.0 = 3.0v, giving v = 2.0 m/s."
+        },
+        {
+            id: 21,
+            topic: "Momentum",
+            difficulty: "Intermediate",
+            question: "A force of 200 N acts on a ball for 0.050 s. What is the impulse delivered to the ball?",
+            options: [
+                "4.0 N s",
+                "10 N s",
+                "40 N s",
+                "100 N s"
+            ],
+            correctAnswer: 1,
+            explanation: "Impulse = Force \u00D7 time = F\u0394t = 200 \u00D7 0.050 = 10 N s. Impulse equals the change in momentum of the ball."
+        },
+        {
+            id: 22,
+            topic: "Momentum",
+            difficulty: "Intermediate",
+            question: "A 0.16 kg ball travelling at 12 m/s hits a wall and rebounds at 8.0 m/s. What is the magnitude of the change in momentum?",
+            options: [
+                "0.64 kg m/s",
+                "1.28 kg m/s",
+                "1.92 kg m/s",
+                "3.20 kg m/s"
+            ],
+            correctAnswer: 3,
+            explanation: "Taking the initial direction as positive: initial momentum = 0.16 \u00D7 12 = 1.92 kg m/s. Final momentum = 0.16 \u00D7 (\u22128.0) = \u22121.28 kg m/s. Change in momentum = \u22121.28 \u2212 1.92 = \u22123.20 kg m/s. Magnitude = 3.20 kg m/s."
+        },
+        {
+            id: 23,
+            topic: "Momentum",
+            difficulty: "Intermediate",
+            question: "Two ice skaters push apart from rest. The 60 kg skater moves at 2.0 m/s. At what speed does the 40 kg skater move?",
+            options: [
+                "1.5 m/s",
+                "2.0 m/s",
+                "3.0 m/s",
+                "4.0 m/s"
+            ],
+            correctAnswer: 2,
+            explanation: "Total initial momentum is zero (both at rest). By conservation of momentum: 0 = 60 \u00D7 2.0 + 40 \u00D7 (\u2212v). So 40v = 120, giving v = 3.0 m/s (in the opposite direction to the 60 kg skater)."
+        },
+        {
+            id: 24,
+            topic: "Circular Motion",
+            difficulty: "Basic",
+            question: "In uniform circular motion, in which direction does the centripetal force act?",
+            options: [
+                "Tangent to the circle in the direction of motion",
+                "Tangent to the circle opposite to the direction of motion",
+                "Radially outward from the centre",
+                "Radially inward toward the centre"
+            ],
+            correctAnswer: 3,
+            explanation: "The centripetal force always acts radially inward, toward the centre of the circular path. This force is responsible for continuously changing the direction of the velocity, keeping the object moving in a circle."
+        },
+        {
+            id: 25,
+            topic: "Circular Motion",
+            difficulty: "Intermediate",
+            question: "A 0.50 kg mass is attached to a string of length 1.2 m and moves in a horizontal circle at a speed of 4.0 m/s. What is the centripetal force?",
+            options: [
+                "3.3 N",
+                "5.0 N",
+                "6.7 N",
+                "8.0 N"
+            ],
+            correctAnswer: 2,
+            explanation: "Centripetal force F = mv\u00B2/r = 0.50 \u00D7 4.0\u00B2 / 1.2 = 0.50 \u00D7 16 / 1.2 = 8.0 / 1.2 = 6.67 \u2248 6.7 N."
+        },
+        {
+            id: 26,
+            topic: "Circular Motion",
+            difficulty: "Intermediate",
+            question: "Convert an angular speed of 300 revolutions per minute (rpm) to radians per second.",
+            options: [
+                "10.0 rad/s",
+                "18.8 rad/s",
+                "31.4 rad/s",
+                "47.1 rad/s"
+            ],
+            correctAnswer: 2,
+            explanation: "300 rpm = 300/60 rev/s = 5.0 rev/s. Since 1 revolution = 2\u03C0 radians: \u03C9 = 5.0 \u00D7 2\u03C0 = 10\u03C0 = 31.4 rad/s."
+        },
+        {
+            id: 27,
+            topic: "Circular Motion",
+            difficulty: "Intermediate",
+            question: "A satellite orbits a planet at radius r with orbital speed v. If the orbital radius is doubled, by what factor does the orbital speed change? (Assume circular orbit under gravity.)",
+            options: [
+                "It halves",
+                "It decreases by a factor of \u221A2",
+                "It remains the same",
+                "It doubles"
+            ],
+            correctAnswer: 1,
+            explanation: "For a gravitational orbit, mv\u00B2/r = GMm/r\u00B2, so v\u00B2 = GM/r and v = \u221A(GM/r). If r doubles: v' = \u221A(GM/2r) = v/\u221A2. The speed decreases by a factor of \u221A2."
+        },
+        {
+            id: 28,
+            topic: "Circular Motion",
+            difficulty: "Intermediate",
+            question: "A car travels around a banked curve of radius 50 m, banked at 15\u00B0 to the horizontal. At what speed can the car negotiate the curve without any friction? (Take g = 9.8 m/s\u00B2)",
+            options: [
+                "8.2 m/s",
+                "11.4 m/s",
+                "14.7 m/s",
+                "18.0 m/s"
+            ],
+            correctAnswer: 1,
+            explanation: "For a banked curve with no friction: tan \u03B8 = v\u00B2/(rg), so v\u00B2 = rg tan \u03B8 = 50 \u00D7 9.8 \u00D7 tan 15\u00B0 = 490 \u00D7 0.2679 = 131.3. Therefore v = \u221A131.3 = 11.4 m/s."
+        },
+        {
+            id: 29,
+            topic: "Materials",
+            difficulty: "Basic",
+            question: "According to Hooke's law, the force applied to a spring is directly proportional to what?",
+            options: [
+                "The length of the spring",
+                "The extension of the spring",
+                "The mass attached to the spring",
+                "The square of the extension"
+            ],
+            correctAnswer: 1,
+            explanation: "Hooke's law states that F = k\u0394x, where the force F is directly proportional to the extension (or compression) \u0394x, provided the elastic limit is not exceeded. k is the spring constant."
+        },
+        {
+            id: 30,
+            topic: "Materials",
+            difficulty: "Basic",
+            question: "How is tensile stress defined?",
+            options: [
+                "Force multiplied by cross-sectional area",
+                "Extension divided by original length",
+                "Force per unit cross-sectional area",
+                "Energy stored per unit volume"
+            ],
+            correctAnswer: 2,
+            explanation: "Tensile stress \u03C3 = F/A, where F is the applied force and A is the cross-sectional area. It is measured in pascals (Pa) or N/m\u00B2."
+        },
+        {
+            id: 31,
+            topic: "Materials",
+            difficulty: "Intermediate",
+            question: "A wire extends by 2.0 mm when a load of 50 N is applied. What is the spring constant of the wire?",
+            options: [
+                "2,500 N/m",
+                "10,000 N/m",
+                "25,000 N/m",
+                "100,000 N/m"
+            ],
+            correctAnswer: 2,
+            explanation: "Using Hooke's law: k = F/\u0394x = 50 / (2.0 \u00D7 10\u207B\u00B3) = 50 / 0.002 = 25,000 N/m."
+        },
+        {
+            id: 32,
+            topic: "Materials",
+            difficulty: "Intermediate",
+            question: "A wire of original length 2.5 m and diameter 0.80 mm extends by 1.6 mm under a load of 40 N. What is the Young's modulus of the wire material?",
+            options: [
+                "6.2 \u00D7 10\u00B9 Pa",
+                "1.0 \u00D7 10\u00B9\u00B9 Pa",
+                "1.24 \u00D7 10\u00B9\u00B9 Pa",
+                "2.5 \u00D7 10\u00B9\u00B9 Pa"
+            ],
+            correctAnswer: 2,
+            explanation: "Cross-sectional area A = \u03C0(d/2)\u00B2 = \u03C0(0.40 \u00D7 10\u207B\u00B3)\u00B2 = \u03C0 \u00D7 1.6 \u00D7 10\u207B\u2077 = 5.027 \u00D7 10\u207B\u2077 m\u00B2. Stress = F/A = 40 / 5.027 \u00D7 10\u207B\u2077 = 7.96 \u00D7 10\u2077 Pa. Strain = \u0394L/L = 1.6 \u00D7 10\u207B\u00B3 / 2.5 = 6.4 \u00D7 10\u207B\u2074. Young's modulus E = stress/strain = 7.96 \u00D7 10\u2077 / 6.4 \u00D7 10\u207B\u2074 = 1.24 \u00D7 10\u00B9\u00B9 Pa."
+        },
+        {
+            id: 33,
+            topic: "Materials",
+            difficulty: "Intermediate",
+            question: "An elastic band is stretched by loading and then unloaded. The loading and unloading curves do not follow the same path. What does the area between the two curves represent?",
+            options: [
+                "The elastic potential energy stored",
+                "The kinetic energy of the band",
+                "The energy dissipated as heat (thermal energy)",
+                "The work done by the applied force"
+            ],
+            correctAnswer: 2,
+            explanation: "The area between the loading and unloading curves on a force\u2013extension graph represents the energy dissipated as heat during the loading\u2013unloading cycle. This is known as hysteresis, and it occurs because the elastic band does not behave perfectly elastically."
+        },
+        {
+            id: 34,
+            topic: "Waves",
+            difficulty: "Basic",
+            question: "For a transverse wave, in which direction do the particles vibrate relative to the direction of wave travel?",
+            options: [
+                "Parallel to the direction of wave travel",
+                "Perpendicular to the direction of wave travel",
+                "At 45\u00B0 to the direction of wave travel",
+                "In circular paths around the direction of wave travel"
+            ],
+            correctAnswer: 1,
+            explanation: "In a transverse wave, particles oscillate perpendicular (at right angles) to the direction in which the wave is travelling. Examples include electromagnetic waves and waves on a string."
+        },
+        {
+            id: 35,
+            topic: "Waves",
+            difficulty: "Basic",
+            question: "A wave has a frequency of 500 Hz and a wavelength of 0.68 m. What is the speed of the wave?",
+            options: [
+                "170 m/s",
+                "340 m/s",
+                "500 m/s",
+                "735 m/s"
+            ],
+            correctAnswer: 1,
+            explanation: "Using the wave equation: v = f\u03BB = 500 \u00D7 0.68 = 340 m/s. This is the speed of sound in air at room temperature."
+        },
+        {
+            id: 36,
+            topic: "Waves",
+            difficulty: "Basic",
+            question: "What does the principle of superposition state?",
+            options: [
+                "Waves always travel in straight lines through a uniform medium",
+                "The frequency of a wave increases as it enters a denser medium",
+                "When two or more waves meet, the resultant displacement is the sum of the individual displacements",
+                "The speed of a wave depends only on the medium it travels through"
+            ],
+            correctAnswer: 2,
+            explanation: "The principle of superposition states that when two or more waves overlap at a point, the resultant displacement at that point is equal to the vector sum of the individual displacements of each wave. This leads to constructive and destructive interference."
+        },
+        {
+            id: 37,
+            topic: "Waves",
+            difficulty: "Intermediate",
+            question: "In a stationary (standing) wave, what is the distance between two adjacent nodes?",
+            options: [
+                "One quarter of a wavelength",
+                "Half a wavelength",
+                "One wavelength",
+                "Two wavelengths"
+            ],
+            correctAnswer: 1,
+            explanation: "In a stationary wave, nodes (points of zero displacement) are separated by half a wavelength (\u03BB/2). Antinodes (points of maximum displacement) are also separated by \u03BB/2, and each antinode is midway between two adjacent nodes."
+        },
+        {
+            id: 38,
+            topic: "Waves",
+            difficulty: "Intermediate",
+            question: "In a double-slit experiment, light of wavelength 600 nm passes through slits separated by 0.50 mm. The screen is 2.0 m away. What is the fringe spacing?",
+            options: [
+                "0.60 mm",
+                "1.2 mm",
+                "2.4 mm",
+                "4.8 mm"
+            ],
+            correctAnswer: 2,
+            explanation: "Fringe spacing w = \u03BBD/d = (600 \u00D7 10\u207B\u2079 \u00D7 2.0) / (0.50 \u00D7 10\u207B\u00B3) = 1.2 \u00D7 10\u207B\u2076 / 5.0 \u00D7 10\u207B\u2074 = 2.4 \u00D7 10\u207B\u00B3 m = 2.4 mm."
+        },
+        {
+            id: 39,
+            topic: "Waves",
+            difficulty: "Intermediate",
+            question: "A diffraction grating has 300 lines per mm. For light of wavelength 550 nm, what is the angle of the first-order maximum?",
+            options: [
+                "5.3\u00B0",
+                "9.5\u00B0",
+                "12.4\u00B0",
+                "16.5\u00B0"
+            ],
+            correctAnswer: 1,
+            explanation: "Slit spacing d = 1/300 mm = 1/(300 \u00D7 10\u00B3) m = 3.33 \u00D7 10\u207B\u2076 m. Using d sin \u03B8 = n\u03BB for n = 1: sin \u03B8 = \u03BB/d = 550 \u00D7 10\u207B\u2079 / 3.33 \u00D7 10\u207B\u2076 = 0.1651. Therefore \u03B8 = sin\u207B\u00B9(0.1651) = 9.5\u00B0."
+        },
+        {
+            id: 40,
+            topic: "Waves",
+            difficulty: "Intermediate",
+            question: "The refractive index of a type of glass is 1.5. What is the critical angle for total internal reflection at the glass\u2013air boundary?",
+            options: [
+                "33.3\u00B0",
+                "41.8\u00B0",
+                "48.6\u00B0",
+                "56.4\u00B0"
+            ],
+            correctAnswer: 1,
+            explanation: "Using sin C = 1/n = 1/1.5 = 0.6667. Therefore C = sin\u207B\u00B9(0.6667) = 41.8\u00B0. Total internal reflection occurs when the angle of incidence exceeds this critical angle."
+        },
+{
+  id: 41,
+  topic: "Waves",
+  difficulty: "Intermediate",
+  question: "Polarisation can only occur in which type of wave?",
+  options: [
+    "Longitudinal waves only",
+    "Transverse waves only",
+    "Both longitudinal and transverse waves",
+    "Neither — polarisation is not a wave property"
+  ],
+  correctAnswer: 1,
+  explanation: "Polarisation restricts oscillations to a single plane. This is only possible for transverse waves, where oscillations are perpendicular to the direction of propagation and can occur in multiple planes. Longitudinal waves oscillate parallel to the direction of travel and cannot be polarised."
+},
+{
+  id: 42,
+  topic: "Waves",
+  difficulty: "Intermediate",
+  question: "Monochromatic light of wavelength 600 nm passes through a single slit of width 0.10 mm. What is the approximate angular width of the central maximum?",
+  options: [
+    "0.34°",
+    "0.69°",
+    "1.38°",
+    "0.006°"
+  ],
+  correctAnswer: 1,
+  explanation: "The first minimum in single-slit diffraction occurs at sin θ ≈ θ = λ/a = (600 × 10⁻⁹) / (0.10 × 10⁻³) = 6.0 × 10⁻³ rad. The full angular width of the central maximum is 2θ = 0.012 rad = 0.012 × (180/π) ≈ 0.69°."
+},
+{
+  id: 43,
+  topic: "Waves",
+  difficulty: "Intermediate",
+  question: "What evidence does the photoelectric effect provide about the nature of light?",
+  options: [
+    "Light is purely a continuous wave",
+    "Light behaves as particles (photons) with quantised energy",
+    "Light can only travel in straight lines",
+    "Light has no interaction with matter"
+  ],
+  correctAnswer: 1,
+  explanation: "The photoelectric effect shows that light energy is delivered in discrete packets (photons) with energy E = hf. A minimum threshold frequency is needed to eject electrons regardless of intensity, and increasing intensity only increases the number of photoelectrons. These observations cannot be explained by a classical wave model."
+},
+{
+  id: 44,
+  topic: "Thermal Physics",
+  difficulty: "Basic",
+  question: "What is the SI unit of specific heat capacity?",
+  options: [
+    "J K⁻¹",
+    "J kg⁻¹",
+    "J kg⁻¹ K⁻¹",
+    "J mol⁻¹ K⁻¹"
+  ],
+  correctAnswer: 2,
+  explanation: "Specific heat capacity is defined as the energy required to raise the temperature of 1 kg of a substance by 1 K (or 1°C). From Q = mcΔT, we get c = Q/(mΔT), so the units are J/(kg·K) = J kg⁻¹ K⁻¹."
+},
+{
+  id: 45,
+  topic: "Thermal Physics",
+  difficulty: "Basic",
+  question: "How much energy is required to heat 2.0 kg of water (specific heat capacity 4200 J kg⁻¹ K⁻¹) from 20°C to 80°C?",
+  options: [
+    "252,000 J",
+    "504,000 J",
+    "168,000 J",
+    "336,000 J"
+  ],
+  correctAnswer: 1,
+  explanation: "Using Q = mcΔT: Q = 2.0 × 4200 × (80 − 20) = 2.0 × 4200 × 60 = 504,000 J. The temperature change ΔT = 60 K (equivalent to 60°C change)."
+},
+{
+  id: 46,
+  topic: "Thermal Physics",
+  difficulty: "Intermediate",
+  question: "An ideal gas at 300 K occupies a volume of 0.020 m³ at a pressure of 100 kPa. How many moles of gas are present? (R = 8.31 J mol⁻¹ K⁻¹)",
+  options: [
+    "0.40 mol",
+    "0.60 mol",
+    "0.80 mol",
+    "1.00 mol"
+  ],
+  correctAnswer: 2,
+  explanation: "Using the ideal gas equation PV = nRT: n = PV/(RT) = (100,000 × 0.020) / (8.31 × 300) = 2000 / 2493 ≈ 0.80 mol."
+},
+{
+  id: 47,
+  topic: "Thermal Physics",
+  difficulty: "Intermediate",
+  question: "A fixed volume of gas is at 27°C. To what temperature must it be heated to double its pressure at constant volume?",
+  options: [
+    "54°C",
+    "327°C",
+    "600°C",
+    "150°C"
+  ],
+  correctAnswer: 1,
+  explanation: "At constant volume, P ∝ T (in kelvin). Initial temperature T₁ = 27 + 273 = 300 K. For doubled pressure: T₂ = 2 × T₁ = 2 × 300 = 600 K = 600 − 273 = 327°C. You must convert to kelvin before applying the gas law."
+},
+{
+  id: 48,
+  topic: "Thermal Physics",
+  difficulty: "Intermediate",
+  question: "According to the kinetic theory of gases, the mean kinetic energy of a gas molecule is directly proportional to which quantity?",
+  options: [
+    "Pressure of the gas",
+    "Volume of the container",
+    "Absolute temperature (in kelvin)",
+    "Molar mass of the gas"
+  ],
+  correctAnswer: 2,
+  explanation: "Kinetic theory gives ½m<c²> = (3/2)kT, where k is the Boltzmann constant and T is the absolute temperature in kelvin. The mean translational kinetic energy of a molecule depends only on temperature, not on the type of gas or container dimensions."
+},
+{
+  id: 49,
+  topic: "Thermal Physics",
+  difficulty: "Intermediate",
+  question: "How much energy is required to completely melt 0.50 kg of ice at 0°C? (Specific latent heat of fusion of ice Lf = 334,000 J kg⁻¹)",
+  options: [
+    "83,500 J",
+    "167,000 J",
+    "334,000 J",
+    "668,000 J"
+  ],
+  correctAnswer: 1,
+  explanation: "Using Q = mLf: Q = 0.50 × 334,000 = 167,000 J. During a phase change at constant temperature, all the energy goes into breaking intermolecular bonds rather than raising the temperature."
+},
+{
+  id: 50,
+  topic: "Gravitational Fields",
+  difficulty: "Basic",
+  question: "The gravitational field strength at the surface of the Earth is approximately:",
+  options: [
+    "6.67 × 10⁻¹¹ N kg⁻¹",
+    "9.81 N kg⁻¹",
+    "3.71 N kg⁻¹",
+    "1.62 N kg⁻¹"
+  ],
+  correctAnswer: 1,
+  explanation: "The gravitational field strength at the Earth's surface is approximately 9.81 N kg⁻¹ (equivalently 9.81 m s⁻²). The value 6.67 × 10⁻¹¹ is the gravitational constant G, 3.71 N kg⁻¹ is Mars's surface gravity, and 1.62 N kg⁻¹ is the Moon's."
+},
+{
+  id: 51,
+  topic: "Gravitational Fields",
+  difficulty: "Intermediate",
+  question: "Two masses of 5.0 kg and 10 kg are separated by 0.50 m. What is the gravitational force between them? (G = 6.67 × 10⁻¹¹ N m² kg⁻²)",
+  options: [
+    "6.67 × 10⁻⁹ N",
+    "1.33 × 10⁻⁸ N",
+    "2.67 × 10⁻⁸ N",
+    "1.33 × 10⁻⁹ N"
+  ],
+  correctAnswer: 1,
+  explanation: "Using Newton's law of gravitation F = Gm₁m₂/r²: F = (6.67 × 10⁻¹¹ × 5.0 × 10) / (0.50)² = (6.67 × 10⁻¹¹ × 50) / 0.25 = 3.335 × 10⁻⁹ / 0.25 = 1.33 × 10⁻⁸ N."
+},
+{
+  id: 52,
+  topic: "Gravitational Fields",
+  difficulty: "Intermediate",
+  question: "A satellite orbits at a height equal to the Earth's radius R above the surface. If the gravitational field strength at the surface is g₀, what is the field strength at the satellite's altitude?",
+  options: [
+    "g₀/2",
+    "g₀/4",
+    "g₀/3",
+    "g₀/√2"
+  ],
+  correctAnswer: 1,
+  explanation: "Gravitational field strength follows an inverse-square law: g = GM/r². At the surface, r = R. At height R above the surface, r = 2R. So g = GM/(2R)² = GM/(4R²) = g₀/4. Doubling the distance from the centre of the Earth reduces the field to one-quarter."
+},
+{
+  id: 53,
+  topic: "Gravitational Fields",
+  difficulty: "Intermediate",
+  question: "What is the orbital period of a geostationary satellite?",
+  options: [
+    "12 hours",
+    "24 hours",
+    "48 hours",
+    "It depends on the satellite's mass"
+  ],
+  correctAnswer: 1,
+  explanation: "A geostationary satellite orbits in the equatorial plane with a period of exactly 24 hours (one sidereal day), so it remains fixed above the same point on the Earth's surface. This is used for communications and weather satellites. The orbital period is independent of the satellite's mass."
+},
+{
+  id: 54,
+  topic: "Gravitational Fields",
+  difficulty: "Intermediate",
+  question: "The gravitational potential at distance r from a point mass M is V. If the distance is doubled to 2r, what happens to the gravitational potential?",
+  options: [
+    "It doubles (becomes more negative)",
+    "It halves in magnitude (becomes less negative)",
+    "It quarters in magnitude",
+    "It remains unchanged"
+  ],
+  correctAnswer: 1,
+  explanation: "Gravitational potential V = −GM/r. If r doubles: V' = −GM/(2r) = V/2. The magnitude halves and the potential becomes less negative (closer to zero). Note this is an inverse relationship (not inverse-square, which applies to field strength)."
+},
+{
+  id: 55,
+  topic: "Electric Fields",
+  difficulty: "Basic",
+  question: "Which statement correctly describes the interaction between electric charges?",
+  options: [
+    "Like charges attract, unlike charges repel",
+    "Like charges repel, unlike charges attract",
+    "All charges attract each other",
+    "All charges repel each other"
+  ],
+  correctAnswer: 1,
+  explanation: "This is a fundamental law of electrostatics: like charges (both positive or both negative) repel each other, while unlike charges (one positive, one negative) attract each other. The force is described by Coulomb's law."
+},
+{
+  id: 56,
+  topic: "Electric Fields",
+  difficulty: "Intermediate",
+  question: "Two point charges of +3.0 μC and −5.0 μC are separated by 0.20 m. What is the magnitude of the force between them? (k = 8.99 × 10⁹ N m² C⁻²)",
+  options: [
+    "0.337 N",
+    "3.37 N",
+    "33.7 N",
+    "0.674 N"
+  ],
+  correctAnswer: 1,
+  explanation: "Using Coulomb's law F = kq₁q₂/r²: F = (8.99 × 10⁹ × 3.0 × 10⁻⁶ × 5.0 × 10⁻⁶) / (0.20)² = (8.99 × 10⁹ × 1.5 × 10⁻¹¹) / 0.04 = 0.13485 / 0.04 ≈ 3.37 N. The force is attractive since the charges are opposite."
+},
+{
+  id: 57,
+  topic: "Electric Fields",
+  difficulty: "Intermediate",
+  question: "Two parallel plates are separated by 5.0 cm with a potential difference of 200 V across them. What is the electric field strength between the plates?",
+  options: [
+    "40 V m⁻¹",
+    "400 V m⁻¹",
+    "4000 V m⁻¹",
+    "1000 V m⁻¹"
+  ],
+  correctAnswer: 2,
+  explanation: "For a uniform field between parallel plates, E = V/d = 200 / 0.050 = 4000 V m⁻¹. The field is uniform between the plates (ignoring edge effects) and directed from the positive plate to the negative plate."
+},
+{
+  id: 58,
+  topic: "Electric Fields",
+  difficulty: "Intermediate",
+  question: "A 10 μF capacitor is charged to a potential difference of 12 V. How much energy is stored?",
+  options: [
+    "1.44 × 10⁻³ J",
+    "7.2 × 10⁻⁴ J",
+    "1.2 × 10⁻⁴ J",
+    "6.0 × 10⁻⁵ J"
+  ],
+  correctAnswer: 1,
+  explanation: "Energy stored in a capacitor: E = ½CV² = ½ × 10 × 10⁻⁶ × (12)² = ½ × 10 × 10⁻⁶ × 144 = 7.2 × 10⁻⁴ J. This energy is stored in the electric field between the capacitor plates."
+},
+{
+  id: 59,
+  topic: "Electric Fields",
+  difficulty: "Intermediate",
+  question: "A capacitor discharges through a resistor with time constant τ = RC. What fraction of the original charge remains after one time constant?",
+  options: [
+    "0.50 (one half)",
+    "0.37 (1/e)",
+    "0.63 (1 − 1/e)",
+    "0.25 (one quarter)"
+  ],
+  correctAnswer: 1,
+  explanation: "The charge on a discharging capacitor follows Q = Q₀e^(−t/RC). After one time constant (t = τ = RC): Q/Q₀ = e⁻¹ = 1/e ≈ 0.37. So approximately 37% of the original charge remains. This exponential decay is characteristic of RC circuits."
+},
+{
+  id: 60,
+  topic: "Magnetic Fields",
+  difficulty: "Basic",
+  question: "In Fleming's left-hand rule, what do the thumb, first finger, and second finger represent respectively?",
+  options: [
+    "Current, Field, Force",
+    "Force, Current, Field",
+    "Force, Field, Current",
+    "Field, Force, Current"
+  ],
+  correctAnswer: 2,
+  explanation: "Fleming's left-hand rule (for motors): the thumb represents the force (or motion), the first finger represents the magnetic field direction, and the second finger represents the conventional current direction. A useful mnemonic: thuMb = Motion, First finger = Field, seCond finger = Current."
+},
+{
+  id: 61,
+  topic: "Magnetic Fields",
+  difficulty: "Intermediate",
+  question: "A straight wire carrying a current of 5.0 A is placed perpendicular to a magnetic field of 0.30 T. The length of wire in the field is 0.40 m. What is the force on the wire?",
+  options: [
+    "0.15 N",
+    "0.60 N",
+    "1.50 N",
+    "6.00 N"
+  ],
+  correctAnswer: 1,
+  explanation: "Using F = BIl (for a wire perpendicular to the field): F = 0.30 × 5.0 × 0.40 = 0.60 N. Since the wire is perpendicular to the field, sin 90° = 1, so the full formula F = BIl sin θ gives the same result."
+},
+{
+  id: 62,
+  topic: "Magnetic Fields",
+  difficulty: "Intermediate",
+  question: "What does Faraday's law of electromagnetic induction state?",
+  options: [
+    "A changing current always produces a magnetic field",
+    "The induced EMF is equal to the rate of change of magnetic flux linkage",
+    "The induced current opposes the change producing it",
+    "Magnetic field strength is proportional to current"
+  ],
+  correctAnswer: 1,
+  explanation: "Faraday's law states that the magnitude of the induced EMF equals the rate of change of magnetic flux linkage: ε = −dNΦ/dt. The negative sign (from Lenz's law) indicates the induced EMF opposes the change causing it. Option C describes Lenz's law, which is a consequence of Faraday's law."
+},
+{
+  id: 63,
+  topic: "Magnetic Fields",
+  difficulty: "Intermediate",
+  question: "A transformer has 200 turns on the primary coil and 50 turns on the secondary coil. If the input voltage is 240 V, what is the output voltage?",
+  options: [
+    "30 V",
+    "60 V",
+    "120 V",
+    "960 V"
+  ],
+  correctAnswer: 1,
+  explanation: "Using the transformer equation Vs/Vp = Ns/Np: Vs = Vp × (Ns/Np) = 240 × (50/200) = 240 × 0.25 = 60 V. This is a step-down transformer since the secondary has fewer turns than the primary."
+},
+{
+  id: 64,
+  topic: "Particles and Radiation",
+  difficulty: "Basic",
+  question: "How many protons, neutrons, and electrons does a neutral atom of Carbon-14 (¹⁴C) contain?",
+  options: [
+    "7 protons, 7 neutrons, 7 electrons",
+    "6 protons, 8 neutrons, 6 electrons",
+    "6 protons, 6 neutrons, 8 electrons",
+    "8 protons, 6 neutrons, 8 electrons"
+  ],
+  correctAnswer: 1,
+  explanation: "Carbon has atomic number 6, so it has 6 protons. In a neutral atom, electrons equal protons, giving 6 electrons. The mass number is 14, so neutrons = 14 − 6 = 8 neutrons. Carbon-14 is a radioactive isotope used in carbon dating."
+},
+{
+  id: 65,
+  topic: "Particles and Radiation",
+  difficulty: "Intermediate",
+  question: "What distinguishes different isotopes of the same element?",
+  options: [
+    "They have different numbers of protons",
+    "They have the same proton number but different neutron numbers",
+    "They have different numbers of electrons",
+    "They have different chemical properties"
+  ],
+  correctAnswer: 1,
+  explanation: "Isotopes of an element have the same number of protons (same atomic number, so same element) but different numbers of neutrons (different mass numbers). Since they have the same electron configuration, their chemical properties are virtually identical, but their nuclear properties (e.g., stability) can differ."
+},
+{
+  id: 66,
+  topic: "Particles and Radiation",
+  difficulty: "Intermediate",
+  question: "In beta-minus (β⁻) decay, what happens at the nucleon level?",
+  options: [
+    "A proton changes into a neutron, emitting a positron and a neutrino",
+    "A neutron changes into a proton, emitting an electron and an antineutrino",
+    "Two protons and two neutrons are emitted as a helium nucleus",
+    "A neutron is simply ejected from the nucleus"
+  ],
+  correctAnswer: 1,
+  explanation: "In β⁻ decay, a neutron transforms into a proton via the weak interaction: n → p + e⁻ + ν̄ₑ. The atomic number increases by 1 while the mass number stays the same. The antineutrino carries away some energy and momentum to conserve these quantities."
+},
+{
+  id: 67,
+  topic: "Particles and Radiation",
+  difficulty: "Intermediate",
+  question: "In the photoelectric effect, electrons are emitted from a metal surface only when the incident light exceeds what?",
+  options: [
+    "A minimum intensity",
+    "A threshold frequency",
+    "A maximum wavelength of 700 nm",
+    "A minimum exposure time"
+  ],
+  correctAnswer: 1,
+  explanation: "The photoelectric effect requires photons with energy E = hf above the work function φ of the metal. This defines a threshold frequency f₀ = φ/h below which no electrons are emitted, regardless of intensity. Above the threshold, electrons are emitted instantaneously, even at very low intensities."
+},
+{
+  id: 68,
+  topic: "Particles and Radiation",
+  difficulty: "Intermediate",
+  question: "What is the quark composition of a proton?",
+  options: [
+    "udd",
+    "uud",
+    "uuu",
+    "uds"
+  ],
+  correctAnswer: 1,
+  explanation: "A proton consists of two up quarks and one down quark (uud). The charge is: (+2/3) + (+2/3) + (−1/3) = +1e, confirming the proton's +1 charge. A neutron, by contrast, is udd with charge (+2/3) + (−1/3) + (−1/3) = 0."
+},
+{
+  id: 69,
+  topic: "Particles and Radiation",
+  difficulty: "Intermediate",
+  question: "Electron diffraction patterns observed when electrons pass through a thin crystal provide evidence for what?",
+  options: [
+    "Electrons are purely particles with no wave properties",
+    "Wave-particle duality",
+    "Electrons travel faster than light in crystals",
+    "The nuclear model of the atom"
+  ],
+  correctAnswer: 1,
+  explanation: "Electron diffraction demonstrates wave-particle duality: electrons (normally considered particles) produce diffraction patterns characteristic of waves when passing through crystal lattices. The de Broglie wavelength λ = h/p determines the pattern. This confirmed de Broglie's hypothesis that all matter has wave-like properties."
+},
+{
+  id: 70,
+  topic: "Electricity",
+  difficulty: "Basic",
+  question: "A current of 3.0 A flows through a component for 2.0 minutes. What is the total charge that passes?",
+  options: [
+    "6.0 C",
+    "60 C",
+    "360 C",
+    "720 C"
+  ],
+  correctAnswer: 2,
+  explanation: "Using Q = It: Q = 3.0 × (2.0 × 60) = 3.0 × 120 = 360 C. Remember to convert minutes to seconds: 2.0 minutes = 120 seconds. Current is the rate of flow of charge."
+},
+{
+  id: 71,
+  topic: "Electricity",
+  difficulty: "Basic",
+  question: "A potential difference of 12 V is applied across a resistor and a current of 0.50 A flows. What is the resistance?",
+  options: [
+    "6.0 Ω",
+    "12 Ω",
+    "24 Ω",
+    "0.042 Ω"
+  ],
+  correctAnswer: 2,
+  explanation: "Using Ohm's law R = V/I: R = 12 / 0.50 = 24 Ω. Ohm's law states that for an ohmic conductor at constant temperature, the current through it is directly proportional to the potential difference across it."
+},
+{
+  id: 72,
+  topic: "Electricity",
+  difficulty: "Intermediate",
+  question: "A wire has length 2.0 m, cross-sectional area 1.0 × 10⁻⁶ m², and resistance 34 Ω. What is the resistivity of the wire material?",
+  options: [
+    "1.7 × 10⁻⁶ Ω m",
+    "1.7 × 10⁻⁵ Ω m",
+    "6.8 × 10⁻⁵ Ω m",
+    "3.4 × 10⁻⁵ Ω m"
+  ],
+  correctAnswer: 1,
+  explanation: "Using ρ = RA/l: ρ = (34 × 1.0 × 10⁻⁶) / 2.0 = 34 × 10⁻⁶ / 2.0 = 1.7 × 10⁻⁵ Ω m. This value is characteristic of a metallic alloy. Resistivity is a material property, unlike resistance which depends on the dimensions of the conductor."
+},
+{
+  id: 73,
+  topic: "Electricity",
+  difficulty: "Intermediate",
+  question: "A 6.0 Ω resistor and a 12 Ω resistor are connected in parallel. What is the combined resistance?",
+  options: [
+    "2.0 Ω",
+    "4.0 Ω",
+    "18 Ω",
+    "8.0 Ω"
+  ],
+  correctAnswer: 1,
+  explanation: "For resistors in parallel: 1/R = 1/R₁ + 1/R₂ = 1/6 + 1/12 = 2/12 + 1/12 = 3/12 = 1/4. Therefore R = 4.0 Ω. The combined resistance in parallel is always less than the smallest individual resistor."
+},
+{
+  id: 74,
+  topic: "Electricity",
+  difficulty: "Intermediate",
+  question: "In a potential divider circuit, a 200 Ω resistor and a 300 Ω resistor are connected in series across a 10 V supply. What is the potential difference across the 300 Ω resistor?",
+  options: [
+    "4.0 V",
+    "5.0 V",
+    "6.0 V",
+    "7.5 V"
+  ],
+  correctAnswer: 2,
+  explanation: "Using the potential divider equation: V₃₀₀ = V_total × R₃₀₀/(R₂₀₀ + R₃₀₀) = 10 × 300/(200 + 300) = 10 × 300/500 = 6.0 V. The voltage divides in the same ratio as the resistances in a series circuit."
+},
+{
+  id: 75,
+  topic: "Electricity",
+  difficulty: "Intermediate",
+  question: "A battery has an EMF of 9.0 V and internal resistance of 0.50 Ω. It is connected to an external resistance of 4.0 Ω. What is the terminal potential difference?",
+  options: [
+    "7.0 V",
+    "8.0 V",
+    "9.0 V",
+    "4.5 V"
+  ],
+  correctAnswer: 1,
+  explanation: "Current in the circuit: I = EMF/(R + r) = 9.0/(4.0 + 0.50) = 9.0/4.5 = 2.0 A. Terminal PD = EMF − Ir = 9.0 − (2.0 × 0.50) = 9.0 − 1.0 = 8.0 V. The 'lost volts' (1.0 V) are dropped across the internal resistance."
+},
+{
+  id: 76,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Intermediate",
+  question: "Which condition defines simple harmonic motion (SHM)?",
+  options: [
+    "Velocity is constant throughout the motion",
+    "Acceleration is constant in magnitude and direction",
+    "Acceleration is proportional to displacement and directed toward equilibrium",
+    "The restoring force is constant regardless of displacement"
+  ],
+  correctAnswer: 2,
+  explanation: "SHM is defined by the condition a = −ω²x, meaning acceleration is directly proportional to displacement from the equilibrium position and always directed toward it (indicated by the negative sign). This results in sinusoidal oscillations."
+},
+{
+  id: 77,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Intermediate",
+  question: "A mass of 0.40 kg is attached to a spring with spring constant 160 N m⁻¹. What is the period of oscillation?",
+  options: [
+    "0.10 s",
+    "0.20 s",
+    "0.31 s",
+    "0.63 s"
+  ],
+  correctAnswer: 2,
+  explanation: "For a mass-spring system: T = 2π√(m/k) = 2π√(0.40/160) = 2π√(2.5 × 10⁻³) = 2π × 0.050 = 0.314 ≈ 0.31 s. The period depends on the mass and spring constant but is independent of amplitude."
+},
+{
+  id: 78,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "A particle undergoes SHM with displacement x = 0.050 sin(4πt) metres. What is the maximum velocity of the particle?",
+  options: [
+    "0.20 m s⁻¹",
+    "0.40 m s⁻¹",
+    "0.63 m s⁻¹",
+    "1.26 m s⁻¹"
+  ],
+  correctAnswer: 2,
+  explanation: "From x = A sin(ωt), the amplitude A = 0.050 m and angular frequency ω = 4π rad s⁻¹. Maximum velocity v_max = Aω = 0.050 × 4π = 0.050 × 12.566 = 0.628 ≈ 0.63 m s⁻¹. Maximum velocity occurs as the particle passes through the equilibrium position."
+},
+{
+  id: 79,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "In SHM, at what displacement from equilibrium is the kinetic energy equal to the potential energy?",
+  options: [
+    "x = A/2",
+    "x = A/√2",
+    "x = A/4",
+    "x = 0"
+  ],
+  correctAnswer: 1,
+  explanation: "Total energy E = ½kA². Potential energy Ep = ½kx². When Ek = Ep, each equals E/2, so ½kx² = ¼kA², giving x² = A²/2, therefore x = A/√2 ≈ 0.707A. At this displacement, energy is equally shared between kinetic and potential forms."
+},
+{
+  id: 80,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "A simple pendulum has length 1.0 m on Earth (g = 9.8 m s⁻²). What is its period of oscillation?",
+  options: [
+    "1.00 s",
+    "1.57 s",
+    "2.01 s",
+    "3.14 s"
+  ],
+  correctAnswer: 2,
+  explanation: "For a simple pendulum: T = 2π√(l/g) = 2π√(1.0/9.8) = 2π√(0.1020) = 2π × 0.3195 = 2.007 ≈ 2.01 s. This is valid for small-angle oscillations. A 1-metre pendulum with a period of approximately 2 seconds is sometimes called a 'seconds pendulum'."
+},
+{
+  id: 81,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "When light damping is applied to an oscillating system, which quantity decreases over time while the frequency remains approximately constant?",
+  options: [
+    "Period",
+    "Angular frequency",
+    "Amplitude",
+    "Wavelength"
+  ],
+  correctAnswer: 2,
+  explanation: "Light damping causes the amplitude of oscillations to decrease exponentially over time due to energy dissipation, while the frequency (and therefore period) remains approximately constant. The amplitude envelope follows A(t) = A₀e^(−γt), where γ is the damping coefficient."
+},
+{
+  id: 82,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "At resonance, what is the relationship between the driving frequency and the natural frequency of the system?",
+  options: [
+    "Driving frequency is double the natural frequency",
+    "Driving frequency equals the natural frequency of the system",
+    "Driving frequency is half the natural frequency",
+    "Driving frequency is unrelated to the natural frequency"
+  ],
+  correctAnswer: 1,
+  explanation: "Resonance occurs when the driving frequency matches the natural frequency of the system. At resonance, maximum energy is transferred to the oscillating system, producing the largest amplitude. In lightly damped systems, the resonant frequency is very close to the natural frequency."
+},
+{
+  id: 83,
+  topic: "Simple Harmonic Motion",
+  difficulty: "Advanced",
+  question: "In SHM, at what point during the oscillation does the maximum acceleration occur?",
+  options: [
+    "At the equilibrium position",
+    "At maximum displacement from equilibrium",
+    "Midway between equilibrium and maximum displacement",
+    "Acceleration is constant throughout SHM"
+  ],
+  correctAnswer: 1,
+  explanation: "Since a = −ω²x, the acceleration is greatest in magnitude when the displacement |x| is maximum, i.e., at the turning points (x = ±A). At these points the velocity is momentarily zero. Conversely, at the equilibrium position (x = 0), the acceleration is zero and the velocity is at its maximum."
+},
+{
+  id: 84,
+  topic: "Astrophysics",
+  difficulty: "Intermediate",
+  question: "One parsec is defined as the distance at which a star has a parallax angle of:",
+  options: [
+    "1 degree",
+    "1 arcminute",
+    "1 arcsecond",
+    "1 radian"
+  ],
+  correctAnswer: 2,
+  explanation: "A parsec (parallax-arcsecond) is the distance at which a star would have a parallax angle of exactly 1 arcsecond when observed from opposite sides of the Earth's orbit (baseline = 1 AU). 1 parsec ≈ 3.26 light-years ≈ 3.09 × 10¹⁶ m. The closer a star, the larger its parallax angle."
+},
+{
+  id: 85,
+  topic: "Astrophysics",
+  difficulty: "Intermediate",
+  question: "Stefan's law (Stefan-Boltzmann law) relates a star's luminosity to which quantities?",
+  options: [
+    "Mass and distance",
+    "Surface area and temperature to the fourth power",
+    "Density and volume",
+    "Apparent brightness and parallax"
+  ],
+  correctAnswer: 1,
+  explanation: "Stefan's law states L = σAT⁴, where L is luminosity, σ is the Stefan-Boltzmann constant, A is the surface area (A = 4πr²), and T is the surface (effective) temperature. Luminosity is extremely sensitive to temperature due to the T⁴ dependence — doubling the temperature increases luminosity by a factor of 16."
+},
+{
+  id: 86,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "A star has a peak emission wavelength of 500 nm. Using Wien's displacement law (b = 2.9 × 10⁻³ m K), what is its surface temperature?",
+  options: [
+    "2900 K",
+    "4200 K",
+    "5800 K",
+    "7500 K"
+  ],
+  correctAnswer: 2,
+  explanation: "Wien's displacement law: λ_max × T = b. Rearranging: T = b/λ_max = (2.9 × 10⁻³) / (500 × 10⁻⁹) = (2.9 × 10⁻³) / (5.0 × 10⁻⁷) = 5800 K. This is approximately the surface temperature of our Sun, which appears yellow-white."
+},
+{
+  id: 87,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "On a Hertzsprung-Russell (HR) diagram, where are main sequence stars located?",
+  options: [
+    "In the top-right corner",
+    "In the bottom-left corner only",
+    "In a diagonal band from top-left to bottom-right",
+    "Scattered randomly across the diagram"
+  ],
+  correctAnswer: 2,
+  explanation: "Main sequence stars form a diagonal band running from the top-left (hot, luminous blue stars) to the bottom-right (cool, dim red stars) of the HR diagram. About 90% of stars lie on the main sequence, where they are fusing hydrogen into helium. Red giants appear in the top-right and white dwarfs in the bottom-left."
+},
+{
+  id: 88,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "Hubble's law states that the recession velocity of a distant galaxy is proportional to:",
+  options: [
+    "Its luminosity",
+    "Its mass",
+    "Its distance from us",
+    "Its apparent brightness"
+  ],
+  correctAnswer: 2,
+  explanation: "Hubble's law states v = H₀d, where v is the recession velocity, H₀ is the Hubble constant, and d is the distance to the galaxy. This linear relationship between distance and recession velocity provides key evidence for the expansion of the universe. More distant galaxies recede faster."
+},
+{
+  id: 89,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "What does the cosmic microwave background (CMB) radiation provide evidence for?",
+  options: [
+    "The steady-state theory of the universe",
+    "The existence of dark matter in galaxies",
+    "The Big Bang — it is uniform microwave radiation consistent with a ~2.7 K blackbody, a remnant of the early hot universe",
+    "The formation of the solar system"
+  ],
+  correctAnswer: 2,
+  explanation: "The CMB is a nearly uniform microwave radiation corresponding to a blackbody temperature of approximately 2.7 K. It is the red-shifted remnant of the intense thermal radiation from the early universe, emitted about 380,000 years after the Big Bang when the universe cooled enough for atoms to form. Its discovery in 1965 was strong evidence for the Big Bang model."
+},
+{
+  id: 90,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "A star is 10 times more luminous than another star at the same surface temperature. How many times larger is its radius?",
+  options: [
+    "10 times",
+    "√10 ≈ 3.16 times",
+    "100 times",
+    "2.5 times"
+  ],
+  correctAnswer: 1,
+  explanation: "From Stefan's law L = σAT⁴ = 4πσr²T⁴. For two stars at the same temperature: L₁/L₂ = r₁²/r₂². If L₁ = 10L₂, then r₁²/r₂² = 10, so r₁/r₂ = √10 ≈ 3.16. The radius scales as the square root of the luminosity ratio when temperature is held constant."
+}
+{
+  id: 91,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "Type Ia supernovae are used as 'standard candles' for measuring cosmological distances. Why are they suitable for this purpose?",
+  options: [
+    "They all have approximately the same peak absolute magnitude, allowing distance calculation from observed brightness",
+    "They emit only a single wavelength of light that is easy to measure",
+    "They occur at regular, predictable time intervals in every galaxy",
+    "They are the closest supernovae to Earth and therefore the easiest to observe"
+  ],
+  correctAnswer: 0,
+  explanation: "Type Ia supernovae occur when a white dwarf accretes matter to reach the Chandrasekhar limit (~1.4 solar masses) and undergoes thermonuclear explosion. Because they all explode at essentially the same mass, they all reach approximately the same peak absolute magnitude (about −19.3). By comparing this known luminosity with the observed apparent magnitude, astronomers can determine the distance using the inverse square law."
+},
+{
+  id: 92,
+  topic: "Astrophysics",
+  difficulty: "Advanced",
+  question: "Wien's displacement law states λ_max × T = 2.9 × 10⁻³ m K. A star has a surface temperature of 12 000 K. What is the peak wavelength of its emission spectrum?",
+  options: [
+    "242 nm, which lies in the ultraviolet region",
+    "483 nm, which lies in the visible blue region",
+    "580 nm, which lies in the visible yellow region",
+    "1450 nm, which lies in the infrared region"
+  ],
+  correctAnswer: 0,
+  explanation: "Using Wien's displacement law: λ_max = (2.9 × 10⁻³) / T = (2.9 × 10⁻³) / 12 000 = 2.42 × 10⁻⁷ m = 242 nm. This wavelength falls in the ultraviolet region of the electromagnetic spectrum (below the visible range of ~400–700 nm). Such a hot star would appear blue-white to the human eye because the visible portion of its spectrum is dominated by shorter wavelengths."
+},
+{
+  id: 93,
+  topic: "Astrophysics",
+  difficulty: "Intermediate",
+  question: "What method is used to detect exoplanets by measuring a periodic dimming in the brightness of a star?",
+  options: [
+    "Radial velocity (Doppler wobble) method",
+    "Transit method",
+    "Direct imaging method",
+    "Gravitational microlensing method"
+  ],
+  correctAnswer: 1,
+  explanation: "The transit method detects exoplanets by measuring the small, periodic dip in a star's brightness that occurs when a planet passes (transits) between the star and the observer. The amount of dimming depends on the ratio of the planet's cross-sectional area to that of the star. This method has been extremely successful; NASA's Kepler space telescope used it to discover thousands of exoplanets."
+},
+{
+  id: 94,
+  topic: "Medical Physics",
+  difficulty: "Intermediate",
+  question: "Ultrasound imaging produces images of internal body structures. Which physical principle is primarily responsible for image formation?",
+  options: [
+    "Diffraction of sound waves around internal organs",
+    "Reflection of sound waves at tissue boundaries due to differences in acoustic impedance",
+    "Absorption of sound waves by bones creating shadow images",
+    "Interference patterns formed between incident and reflected sound waves"
+  ],
+  correctAnswer: 1,
+  explanation: "Ultrasound imaging relies on the reflection (echo) of high-frequency sound pulses at boundaries between tissues with different acoustic impedances. The greater the difference in acoustic impedance between two adjacent tissues, the greater the fraction of ultrasound reflected at the boundary. The time delay between transmission and reception of each echo indicates the depth of the reflecting surface, allowing a real-time image to be constructed."
+},
+{
+  id: 95,
+  topic: "Medical Physics",
+  difficulty: "Intermediate",
+  question: "The acoustic impedance Z of a medium is defined as the product of which two quantities?",
+  options: [
+    "Frequency and wavelength of the ultrasound",
+    "Density of the medium and the speed of sound in that medium",
+    "Amplitude and frequency of the ultrasound wave",
+    "Pressure and volume of the medium"
+  ],
+  correctAnswer: 1,
+  explanation: "Acoustic impedance is defined as Z = ρc, where ρ is the density of the medium (in kg m⁻³) and c is the speed of sound in that medium (in m s⁻¹). The SI unit of acoustic impedance is kg m⁻² s⁻¹ (also called the rayl). The fraction of ultrasound intensity reflected at a boundary depends on the difference in acoustic impedance between the two media: the reflection coefficient = (Z₂ − Z₁)² / (Z₂ + Z₁)²."
+},
+{
+  id: 96,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "In an X-ray tube, X-rays are produced when high-speed electrons strike a metal target. What is the primary mechanism by which the characteristic continuous spectrum of X-rays (as opposed to line spectra) is generated?",
+  options: [
+    "Electrons excite inner-shell transitions in target atoms, producing characteristic line spectra only",
+    "Deceleration of electrons by the target metal anode produces Bremsstrahlung (braking) radiation",
+    "Nuclear fission of target atoms releases gamma radiation",
+    "Thermionic emission from the heated target produces a continuous spectrum"
+  ],
+  correctAnswer: 1,
+  explanation: "The continuous spectrum of X-rays is produced by Bremsstrahlung (German for 'braking radiation'). When high-speed electrons are decelerated by interactions with the electric field of target nuclei, they lose kinetic energy which is emitted as X-ray photons. The maximum photon energy equals the kinetic energy of the incident electron (eV, where V is the accelerating voltage). The characteristic line spectrum is a separate process involving inner-shell electron transitions."
+},
+{
+  id: 97,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "In a computed tomography (CT) scan, what components rotate around the patient to acquire image data from multiple angles?",
+  options: [
+    "A radioactive source and a scintillation counter",
+    "An ultrasound transducer and a reflector plate",
+    "An X-ray tube and an array of detectors",
+    "A magnetic coil and a radiofrequency antenna"
+  ],
+  correctAnswer: 2,
+  explanation: "In a CT scanner, an X-ray tube and a curved array of detectors rotate together around the patient (or in some designs, a ring of fixed detectors surrounds the patient while the X-ray tube rotates). X-ray intensity measurements are taken at many angles, and a computer uses mathematical algorithms (back-projection or iterative reconstruction) to construct detailed cross-sectional images of the body."
+},
+{
+  id: 98,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "The half-value thickness (HVT) of lead for a particular X-ray beam is 0.5 mm. What fraction of the X-ray intensity is transmitted through a lead sheet of thickness 1.5 mm?",
+  options: [
+    "1/2 = 0.50",
+    "1/4 = 0.25",
+    "1/8 = 0.125",
+    "1/16 = 0.0625"
+  ],
+  correctAnswer: 2,
+  explanation: "The number of half-value thicknesses in 1.5 mm of lead is 1.5 / 0.5 = 3. Each HVT reduces the intensity by half, so the transmitted fraction is (1/2)³ = 1/8 = 0.125. This means only 12.5% of the original X-ray intensity passes through the lead. This exponential attenuation follows I = I₀ × (1/2)^(x/HVT), which is equivalent to the exponential attenuation law I = I₀ e^(−μx), where μ = ln 2 / HVT."
+},
+{
+  id: 99,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "Technetium-99m (⁹⁹ᵐTc) has a half-life of 6.0 hours and is the most widely used radioisotope in medical imaging. Why is its half-life particularly suitable for use as a diagnostic tracer?",
+  options: [
+    "It is long enough for the isotope to remain active for several years of repeated scans",
+    "It is short enough that the isotope decays before reaching the target organ",
+    "It is long enough to allow preparation, injection and imaging, but short enough to limit the radiation dose to the patient",
+    "It matches the half-life of naturally occurring isotopes in the body, avoiding immune response"
+  ],
+  correctAnswer: 2,
+  explanation: "The 6-hour half-life of ⁹⁹ᵐTc provides an excellent balance for medical imaging. It is long enough (several hours) to allow the radiopharmaceutical to be prepared, administered to the patient, taken up by the target organ, and imaged using a gamma camera. However, it is short enough that the radioactivity decays rapidly afterwards, significantly reducing the total radiation dose received by the patient. Additionally, ⁹⁹ᵐTc emits 140 keV gamma rays (no alpha or beta), which is ideal for gamma camera detection."
+},
+{
+  id: 100,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "In positron emission tomography (PET), what is detected by the ring of detectors surrounding the patient?",
+  options: [
+    "Single gamma rays emitted directly from the radioactive tracer",
+    "Pairs of gamma rays (each 511 keV) produced by positron-electron annihilation, travelling in opposite directions",
+    "Beta particles emitted from the tracer after they pass through tissue",
+    "X-rays produced by the interaction of positrons with atomic nuclei"
+  ],
+  correctAnswer: 1,
+  explanation: "In PET imaging, a positron-emitting tracer (e.g. fluorine-18 in FDG) is injected into the patient. Each emitted positron quickly annihilates with a nearby electron, producing two gamma-ray photons each of energy 511 keV (corresponding to the rest mass energy of an electron/positron via E = mc²). These two photons travel in almost exactly opposite directions (180° apart). Coincidence detection of both photons by the detector ring identifies the line along which the annihilation occurred, enabling image reconstruction."
+},
+{
+  id: 101,
+  topic: "Medical Physics",
+  difficulty: "Advanced",
+  question: "Medical endoscopes use bundles of optical fibres to transmit light and images from inside the body. What optical property of light allows it to be transmitted along curved fibres with minimal loss?",
+  options: [
+    "Diffraction of light around bends in the fibre",
+    "Polarisation of light along the fibre axis",
+    "Total internal reflection at the core-cladding boundary",
+    "Constructive interference within the fibre core"
+  ],
+  correctAnswer: 2,
+  explanation: "Optical fibres work by total internal reflection (TIR). Each fibre consists of a glass or plastic core surrounded by cladding of lower refractive index. When light travelling in the core strikes the core-cladding boundary at an angle greater than the critical angle, it is totally internally reflected and remains within the core. This allows light to be transmitted around curves with very little loss. Endoscopes use a coherent bundle (where fibres maintain the same relative positions at both ends) to transmit images."
+},
+{
+  id: 102,
+  topic: "Nuclear Physics",
+  difficulty: "Intermediate",
+  question: "What is meant by the binding energy of a nucleus?",
+  options: [
+    "The energy released when a nucleus is formed from its constituent nucleons",
+    "The energy required to separate a nucleus completely into its individual protons and neutrons",
+    "The kinetic energy of nucleons as they orbit within the nucleus",
+    "The electrostatic potential energy between protons in the nucleus"
+  ],
+  correctAnswer: 1,
+  explanation: "The binding energy of a nucleus is the minimum energy required to completely separate the nucleus into its individual, isolated nucleons (protons and neutrons). Equivalently, it is the energy released when individual nucleons come together to form the nucleus. The binding energy arises from the mass defect: the mass of the nucleus is less than the sum of the masses of its individual nucleons, and this 'missing' mass has been converted into binding energy according to E = mc². Note that both options A and B describe the same quantity from different perspectives, but option B is the standard definition."
+},
+{
+  id: 103,
+  topic: "Nuclear Physics",
+  difficulty: "Intermediate",
+  question: "Using Einstein's mass-energy equivalence E = mc², calculate the energy released when 1.0 × 10⁻³ kg of mass is completely converted into energy. (Speed of light c = 3.0 × 10⁸ m s⁻¹)",
+  options: [
+    "9.0 × 10⁵ J",
+    "3.0 × 10⁵ J",
+    "9.0 × 10¹³ J",
+    "9.0 × 10¹⁶ J"
+  ],
+  correctAnswer: 2,
+  explanation: "E = mc² = (1.0 × 10⁻³) × (3.0 × 10⁸)² = (1.0 × 10⁻³) × (9.0 × 10¹⁶) = 9.0 × 10¹³ J. This enormous amount of energy (90 terajoules) from just 1 gram of mass illustrates why nuclear reactions release so much more energy per kilogram than chemical reactions. For comparison, this is roughly the energy released by 21 kilotonnes of TNT."
+},
+{
+  id: 104,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "A radioactive sample has an initial activity of 800 Bq. The half-life of the isotope is 4.0 hours. What is the activity of the sample after 12 hours?",
+  options: [
+    "200 Bq",
+    "100 Bq",
+    "50 Bq",
+    "400 Bq"
+  ],
+  correctAnswer: 1,
+  explanation: "In 12 hours, the number of half-lives elapsed is 12 / 4.0 = 3. After each half-life, the activity halves: after 4 h: 800 → 400 Bq; after 8 h: 400 → 200 Bq; after 12 h: 200 → 100 Bq. Alternatively, A = A₀ × (1/2)ⁿ = 800 × (1/2)³ = 800 × 1/8 = 100 Bq."
+},
+{
+  id: 105,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "The graph of binding energy per nucleon against nucleon number (mass number) shows a peak. Which nuclide has approximately the highest binding energy per nucleon?",
+  options: [
+    "Helium-4 (⁴He)",
+    "Carbon-12 (¹²C)",
+    "Iron-56 (⁵⁶Fe)",
+    "Uranium-238 (²³⁸U)"
+  ],
+  correctAnswer: 2,
+  explanation: "Iron-56 (and nickel-62) sits at the peak of the binding energy per nucleon curve, with approximately 8.8 MeV per nucleon. This means iron-56 is the most tightly bound common nucleus. Nuclei lighter than iron can release energy by fusion (moving up the curve), while nuclei heavier than iron can release energy by fission (also moving toward the peak). This is why iron is the end product of stellar nucleosynthesis in massive stars."
+},
+{
+  id: 106,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "In a nuclear fission reactor, what is the function of the moderator?",
+  options: [
+    "To absorb excess neutrons and control the rate of the chain reaction",
+    "To slow down fast neutrons to thermal energies so they can cause further fission",
+    "To shield the reactor and prevent radiation from escaping",
+    "To cool the reactor core and transfer thermal energy to the steam generator"
+  ],
+  correctAnswer: 1,
+  explanation: "The moderator (commonly graphite or water) slows down the fast neutrons produced by fission from energies of ~2 MeV to thermal energies (~0.025 eV). This is necessary because uranium-235 has a much higher fission cross-section (probability of capturing a neutron and undergoing fission) for slow (thermal) neutrons than for fast neutrons. Neutrons are slowed by elastic collisions with moderator nuclei. The control rods (not the moderator) absorb excess neutrons to regulate the chain reaction."
+},
+{
+  id: 107,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "The decay constant is related to half-life by λ = 0.693 / t½. A radioactive sample with a half-life of 8.0 days contains 1.00 × 10⁹ undecayed atoms. What is the initial activity of the sample?",
+  options: [
+    "100 Bq",
+    "1003 Bq",
+    "1.45 × 10⁵ Bq",
+    "8.66 × 10⁴ Bq"
+  ],
+  correctAnswer: 1,
+  explanation: "First convert the half-life to seconds: t½ = 8.0 × 24 × 3600 = 691 200 s. Then calculate the decay constant: λ = 0.693 / 691 200 = 1.003 × 10⁻⁶ s⁻¹. Activity A = λN = (1.003 × 10⁻⁶) × (1.00 × 10⁹) = 1003 Bq. The activity in becquerels equals the number of decays per second, and the becquerel (Bq) is defined as one decay per second."
+},
+{
+  id: 108,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "Nuclear fusion requires temperatures of tens of millions of kelvin. Why are such extremely high temperatures necessary?",
+  options: [
+    "To melt the nuclear fuel into a plasma state so it can be magnetically confined",
+    "To overcome the electrostatic (Coulomb) repulsion between positively charged nuclei so they can get close enough to fuse",
+    "To break apart the electron shells so that bare nuclei are exposed",
+    "To increase the mass of the nuclei so they have sufficient binding energy"
+  ],
+  correctAnswer: 1,
+  explanation: "Atomic nuclei are positively charged, so they repel each other via the Coulomb (electrostatic) force. For fusion to occur, two nuclei must approach close enough (within ~10⁻¹⁵ m) for the strong nuclear force to overcome this repulsion. At extremely high temperatures, nuclei have sufficient kinetic energy (from thermal motion, since KE = 3/2 kT) to overcome the Coulomb barrier. Even at stellar core temperatures (~15 million K for the Sun), most fusion actually occurs via quantum tunnelling through the barrier."
+},
+{
+  id: 109,
+  topic: "Nuclear Physics",
+  difficulty: "Advanced",
+  question: "An alpha particle consists of 2 protons and 2 neutrons. Given that the proton charge e = 1.60 × 10⁻¹⁹ C and the atomic mass unit u = 1.66 × 10⁻²⁷ kg, what is the approximate specific charge (charge-to-mass ratio) of an alpha particle?",
+  options: [
+    "9.6 × 10⁷ C kg⁻¹",
+    "4.8 × 10⁷ C kg⁻¹",
+    "2.4 × 10⁷ C kg⁻¹",
+    "1.6 × 10⁷ C kg⁻¹"
+  ],
+  correctAnswer: 1,
+  explanation: "The alpha particle has charge Q = 2e = 2 × 1.60 × 10⁻¹⁹ = 3.20 × 10⁻¹⁹ C, and mass m = 4u = 4 × 1.66 × 10⁻²⁷ = 6.64 × 10⁻²⁷ kg. Specific charge = Q/m = (3.20 × 10⁻¹⁹) / (6.64 × 10⁻²⁷) = 4.82 × 10⁷ C kg⁻¹ ≈ 4.8 × 10⁷ C kg⁻¹. This is roughly half the specific charge of a proton (9.6 × 10⁷ C kg⁻¹) because the alpha particle has double the charge but four times the mass."
+},
+{
+  id: 110,
+  topic: "Alternating Current",
+  difficulty: "Intermediate",
+  question: "A UK mains AC supply has a peak voltage of 325 V. What is the root mean square (RMS) voltage?",
+  options: [
+    "163 V",
+    "230 V",
+    "265 V",
+    "325 V"
+  ],
+  correctAnswer: 1,
+  explanation: "The RMS voltage is related to the peak voltage by V_rms = V₀ / √2 = 325 / √2 = 325 / 1.414 = 229.8 ≈ 230 V. The RMS value is the equivalent DC voltage that would dissipate the same average power in a resistive load. This is why the UK mains supply is quoted as 230 V — this is the RMS value, not the peak value."
+},
+{
+  id: 111,
+  topic: "Alternating Current",
+  difficulty: "Intermediate",
+  question: "An alternating current supply has a frequency of 50 Hz. What is the period of the AC waveform?",
+  options: [
+    "0.50 s",
+    "0.10 s",
+    "0.02 s",
+    "0.002 s"
+  ],
+  correctAnswer: 2,
+  explanation: "Period T = 1/f = 1/50 = 0.02 s. The period is the time for one complete cycle of the AC waveform. For the UK mains supply at 50 Hz, the voltage completes 50 full oscillations per second, with each cycle taking 20 milliseconds. The current reverses direction 100 times per second (twice per cycle)."
+},
+{
+  id: 112,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "An AC supply drives a peak current of 5.0 A through a 100 Ω resistor. What is the mean (average) power dissipated in the resistor?",
+  options: [
+    "500 W",
+    "1250 W",
+    "2500 W",
+    "625 W"
+  ],
+  correctAnswer: 1,
+  explanation: "The mean power dissipated by an AC current in a resistor is P = ½I₀²R, where I₀ is the peak current. P = ½ × (5.0)² × 100 = ½ × 25 × 100 = 1250 W. Equivalently, using the RMS current I_rms = I₀/√2 = 3.54 A, P = I_rms² × R = (3.54)² × 100 = 1250 W. The factor of ½ arises because the average value of sin²(ωt) over a complete cycle is ½."
+},
+{
+  id: 113,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "The capacitive reactance of a capacitor is given by X_C = 1/(2πfC). Calculate the reactance of a 10 μF capacitor at a frequency of 50 Hz.",
+  options: [
+    "31.8 Ω",
+    "159 Ω",
+    "318 Ω",
+    "3180 Ω"
+  ],
+  correctAnswer: 2,
+  explanation: "X_C = 1/(2πfC) = 1/(2π × 50 × 10 × 10⁻⁶) = 1/(2π × 5.0 × 10⁻⁴) = 1/(3.14 × 10⁻³) = 318 Ω. Capacitive reactance decreases with increasing frequency and increasing capacitance. At higher frequencies, the capacitor charges and discharges more rapidly, allowing more current to flow, which is equivalent to lower opposition (reactance) to the current."
+},
+{
+  id: 114,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "In a purely capacitive AC circuit (containing only a capacitor and an AC source), what is the phase relationship between the current and the voltage across the capacitor?",
+  options: [
+    "Current and voltage are in phase",
+    "Current lags voltage by 90° (π/2 radians)",
+    "Current leads voltage by 90° (π/2 radians)",
+    "Current leads voltage by 180° (π radians)"
+  ],
+  correctAnswer: 2,
+  explanation: "In a purely capacitive circuit, the current leads the voltage by 90° (π/2 radians). This can be remembered by the mnemonic 'CIVIL': in a Capacitor (C), current (I) leads Voltage (V); in an Inductor (L), Voltage (V) leads current (I). Physically, the capacitor must first receive charge (current flows) before a potential difference builds up across it, so the current reaches its peak before the voltage does."
+},
+{
+  id: 115,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "A transformer with 95% efficiency has an input voltage of 230 V and an output voltage of 12 V. If the output current is 3.0 A, what is the input current?",
+  options: [
+    "0.057 A",
+    "0.157 A",
+    "0.165 A",
+    "1.57 A"
+  ],
+  correctAnswer: 2,
+  explanation: "Efficiency = output power / input power. Output power = V₂I₂ = 12 × 3.0 = 36 W. Input power = output power / efficiency = 36 / 0.95 = 37.9 W. Input current = input power / input voltage = 37.9 / 230 = 0.165 A. The input current is greater than the ideal (lossless) value of 0.157 A because the transformer is not 100% efficient — the extra input power accounts for energy losses due to eddy currents, hysteresis, and resistive heating in the coils."
+},
+{
+  id: 116,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "In a series RLC circuit driven at its resonant frequency, what does the total impedance of the circuit equal?",
+  options: [
+    "Zero, because all reactances cancel",
+    "The resistance R only, because inductive and capacitive reactances are equal and cancel",
+    "The sum of R, X_L and X_C",
+    "The inductive reactance X_L only"
+  ],
+  correctAnswer: 1,
+  explanation: "At resonance, the inductive reactance X_L equals the capacitive reactance X_C. Since these two reactances have opposite effects on the phase of the current (one leading, one lagging), they cancel each other exactly. The total impedance Z = √(R² + (X_L − X_C)²) reduces to Z = R. At this frequency, the current is at its maximum value (V/R), and the current and voltage are in phase. The impedance is not zero because resistance still remains."
+},
+{
+  id: 117,
+  topic: "Alternating Current",
+  difficulty: "Advanced",
+  question: "Electrical power is transmitted over long distances at very high voltages (e.g. 400 kV in the UK National Grid). Why is high voltage used rather than low voltage?",
+  options: [
+    "High voltage prevents the wires from overheating due to the skin effect",
+    "High voltage allows thinner, lighter cables to be used, reducing construction costs",
+    "For a given power, higher voltage means lower current, which reduces power losses (P = I²R) in the transmission cables",
+    "High voltage is required to overcome the resistance of very long cables using Ohm's law"
+  ],
+  correctAnswer: 2,
+  explanation: "For a given power P to be transmitted, P = IV, so increasing the voltage reduces the current proportionally. The power lost as heat in the cables is P_loss = I²R, where R is the cable resistance. By increasing the voltage by a factor of n, the current decreases by a factor of n, and the power loss decreases by a factor of n². For example, transmitting at 400 kV instead of 25 kV (a factor of 16) reduces cable losses by a factor of 256. Step-up transformers increase the voltage for transmission, and step-down transformers reduce it for consumer use."
+},
+{
+  id: 118,
+  topic: "Further Mechanics",
+  difficulty: "Intermediate",
+  question: "The moment of inertia of a rigid body depends on its mass and what other factor?",
+  options: [
+    "The angular velocity at which the body is rotating",
+    "The net torque applied to the body",
+    "The distribution of mass relative to the axis of rotation",
+    "The linear velocity of the centre of mass"
+  ],
+  correctAnswer: 2,
+  explanation: "Moment of inertia I = Σmr², where r is the perpendicular distance of each mass element from the axis of rotation. It depends on both the total mass and how that mass is distributed relative to the rotation axis. Mass located further from the axis contributes more to the moment of inertia (since r is squared). This is why a hollow cylinder has a greater moment of inertia than a solid cylinder of the same mass and radius — its mass is concentrated further from the axis."
+},
+{
+  id: 119,
+  topic: "Further Mechanics",
+  difficulty: "Advanced",
+  question: "A solid cylinder (moment of inertia I = ½MR²) rolls without slipping along a flat surface with linear speed v. What is the total kinetic energy of the cylinder?",
+  options: [
+    "½Mv²",
+    "¾Mv²",
+    "Mv²",
+    "¼Mv²"
+  ],
+  correctAnswer: 1,
+  explanation: "The total KE is the sum of translational and rotational kinetic energy: KE_total = ½Mv² + ½Iω². For rolling without slipping, v = Rω, so ω = v/R. The rotational KE = ½ × (½MR²) × (v/R)² = ¼Mv². Therefore KE_total = ½Mv² + ¼Mv² = ¾Mv². The translational KE accounts for 2/3 of the total, and the rotational KE accounts for 1/3. A hollow cylinder (I = MR²) rolling at the same speed would have total KE = Mv²."
+},
+{
+  id: 120,
+  topic: "Further Mechanics",
+  difficulty: "Advanced",
+  question: "A disc with moment of inertia 0.50 kg m² is spinning at an angular velocity of 10 rad s⁻¹. What is the angular momentum of the disc?",
+  options: [
+    "0.050 kg m² s⁻¹",
+    "5.0 kg m² s⁻¹",
+    "20 kg m² s⁻¹",
+    "50 kg m² s⁻¹"
+  ],
+  correctAnswer: 1,
+  explanation: "Angular momentum L = Iω = 0.50 × 10 = 5.0 kg m² s⁻¹. Angular momentum is the rotational analogue of linear momentum (p = mv). In the absence of an external torque, angular momentum is conserved. The SI unit of angular momentum is kg m² s⁻¹, which is equivalent to N m s or J s."
+},
+{
+  id: 121,
+  topic: "Further Mechanics",
+  difficulty: "Advanced",
+  question: "A torque of 8.0 N m is applied to a wheel with a moment of inertia of 2.0 kg m². What is the angular acceleration of the wheel?",
+  options: [
+    "0.25 rad s⁻²",
+    "4.0 rad s⁻²",
+    "16 rad s⁻²",
+    "10 rad s⁻²"
+  ],
+  correctAnswer: 1,
+  explanation: "Using Newton's second law for rotation: τ = Iα, where τ is torque, I is moment of inertia, and α is angular acceleration. Rearranging: α = τ/I = 8.0 / 2.0 = 4.0 rad s⁻². This is the rotational analogue of F = ma. Just as a net force produces linear acceleration, a net torque produces angular acceleration, with moment of inertia playing the role of mass as the measure of rotational inertia."
+},
+{
+  id: 122,
+  topic: "Further Mechanics",
+  difficulty: "Advanced",
+  question: "An ice skater is spinning with her arms extended. She then pulls her arms in close to her body, reducing her moment of inertia to half its original value. What happens to her angular velocity?",
+  options: [
+    "It remains the same",
+    "It doubles",
+    "It halves",
+    "It quadruples"
+  ],
+  correctAnswer: 1,
+  explanation: "Angular momentum is conserved because no external torque acts on the skater (friction is negligible). L = Iω = constant. If I is halved, then ω must double to keep the product Iω unchanged: I₁ω₁ = I₂ω₂, so ω₂ = (I₁/I₂)ω₁ = 2ω₁. Note that the rotational kinetic energy (½Iω²) increases — the extra energy comes from the internal work done by the skater's muscles as she pulls her arms inward against the centripetal acceleration."
+},
+{
+  id: 123,
+  topic: "Further Mechanics",
+  difficulty: "Advanced",
+  question: "A rotating object has an initial angular velocity of 6.0 rad s⁻¹. It undergoes a constant angular acceleration of 2.0 rad s⁻² for 3.0 s. What is its final angular velocity?",
+  options: [
+    "8.0 rad s⁻¹",
+    "10 rad s⁻¹",
+    "12 rad s⁻¹",
+    "18 rad s⁻¹"
+  ],
+  correctAnswer: 2,
+  explanation: "Using the rotational kinematic equation (analogue of v = u + at): ω = ω₀ + αt = 6.0 + (2.0 × 3.0) = 6.0 + 6.0 = 12 rad s⁻¹. The rotational SUVAT equations have the same form as the linear versions, with angular displacement θ replacing s, angular velocity ω replacing v, and angular acceleration α replacing a."
+},
+{
+  id: 124,
+  topic: "Optics",
+  difficulty: "Intermediate",
+  question: "A converging (convex) lens has a focal length of 20 cm. An object is placed 30 cm from the lens. Using the thin lens equation 1/v = 1/f − 1/u, what is the image distance?",
+  options: [
+    "10 cm",
+    "12 cm",
+    "60 cm",
+    "120 cm"
+  ],
+  correctAnswer: 2,
+  explanation: "Using the thin lens equation (with real-is-positive convention): 1/v = 1/f − 1/u = 1/20 − 1/30 = 3/60 − 2/60 = 1/60. Therefore v = 60 cm. The image is real (positive v), inverted, and magnified. Since the object is between f and 2f (between 20 and 40 cm), the image is formed beyond 2f on the other side of the lens."
+},
+{
+  id: 125,
+  topic: "Optics",
+  difficulty: "Intermediate",
+  question: "For the situation in the previous question (object at 30 cm from a lens of focal length 20 cm, image at 60 cm), what is the linear magnification of the image?",
+  options: [
+    "0.50",
+    "1.5",
+    "2.0",
+    "3.0"
+  ],
+  correctAnswer: 2,
+  explanation: "Magnification m = v/u = 60/30 = 2.0. The image is twice the height of the object. Since the magnification is positive and greater than 1, the image is enlarged. For a single converging lens, when the object is between f and 2f, the image is always real, inverted, and magnified (m > 1). When the object is beyond 2f, the image is real, inverted, and diminished (m < 1)."
+},
+{
+  id: 126,
+  topic: "Optics",
+  difficulty: "Advanced",
+  question: "An object is placed exactly at the focal point of a converging lens. Where is the image formed?",
+  options: [
+    "At the focal point on the other side of the lens",
+    "At twice the focal length from the lens",
+    "At the same position as the object",
+    "At infinity — the refracted rays emerge parallel"
+  ],
+  correctAnswer: 3,
+  explanation: "When an object is placed at the focal point of a converging lens, the rays from each point on the object emerge as a parallel beam after refraction. Parallel rays do not converge, so mathematically the image is formed 'at infinity'. Using the lens equation: 1/v = 1/f − 1/f = 0, giving v = infinity. This principle is used in spotlights, searchlights, and as the configuration of the eyepiece in telescopes in normal adjustment."
+},
+{
+  id: 127,
+  topic: "Optics",
+  difficulty: "Advanced",
+  question: "The refractive index of a particular glass is 1.50. What is the critical angle for total internal reflection at a glass-air boundary?",
+  options: [
+    "30.0°",
+    "41.8°",
+    "48.6°",
+    "56.4°"
+  ],
+  correctAnswer: 1,
+  explanation: "At the critical angle, light refracts along the boundary (angle of refraction = 90°). Using Snell's law: n₁ sin c = n₂ sin 90°, so sin c = n₂/n₁ = 1.00/1.50 = 0.6667. Therefore c = sin⁻¹(0.6667) = 41.8°. For angles of incidence greater than 41.8°, total internal reflection occurs. This is used in optical fibres, prisms in binoculars, and reflective road signs."
+},
+{
+  id: 128,
+  topic: "Optics",
+  difficulty: "Advanced",
+  question: "Two thin converging lenses with focal lengths 10 cm and 20 cm are placed in contact. What is the combined focal length of the system?",
+  options: [
+    "6.67 cm",
+    "15.0 cm",
+    "20.0 cm",
+    "30.0 cm"
+  ],
+  correctAnswer: 0,
+  explanation: "For thin lenses in contact, the powers add: P = P₁ + P₂, which gives 1/f = 1/f₁ + 1/f₂ = 1/10 + 1/20 = 2/20 + 1/20 = 3/20. Therefore f = 20/3 = 6.67 cm. The combined lens is more powerful (shorter focal length) than either individual lens. In terms of power in dioptres: P₁ = 10 D, P₂ = 5 D, P_total = 15 D, f = 1/15 m ≈ 6.67 cm."
+},
+{
+  id: 129,
+  topic: "Optics",
+  difficulty: "Advanced",
+  question: "An astronomical refracting telescope in normal adjustment has an objective lens of focal length 100 cm and an eyepiece of focal length 5.0 cm. What is the angular magnification?",
+  options: [
+    "5.0",
+    "10",
+    "20",
+    "95"
+  ],
+  correctAnswer: 2,
+  explanation: "For an astronomical telescope in normal adjustment (final image at infinity), the angular magnification M = f_objective / f_eyepiece = 100 / 5.0 = 20. In normal adjustment, the separation of the lenses equals f₁ + f₂ = 105 cm, and the intermediate image formed by the objective falls at the focal point of the eyepiece. A larger ratio of focal lengths gives greater magnification, which is why telescope objectives have long focal lengths and eyepieces have short focal lengths."
+},
+{
+  id: 130,
+  topic: "Optics",
+  difficulty: "Advanced",
+  question: "An optical fibre has a numerical aperture (NA) of 0.40. What is the maximum acceptance half-angle (the largest angle to the fibre axis at which light can enter and be guided)?",
+  options: [
+    "11.5°",
+    "23.6°",
+    "33.4°",
+    "66.4°"
+  ],
+  correctAnswer: 1,
+  explanation: "The numerical aperture is defined as NA = sin θ_max, where θ_max is the acceptance half-angle (measured from the fibre axis). Therefore θ_max = sin⁻¹(NA) = sin⁻¹(0.40) = 23.6°. Light entering the fibre at angles greater than this to the axis will not undergo total internal reflection at the core-cladding boundary and will be lost. The NA depends on the refractive indices of the core and cladding: NA = √(n_core² − n_cladding²)."
+},
+{
+  id: 131,
+  topic: "Quantum Physics",
+  difficulty: "Intermediate",
+  question: "Calculate the de Broglie wavelength of an electron (mass = 9.11 × 10⁻³¹ kg) travelling at 1.0 × 10⁶ m s⁻¹. (Planck's constant h = 6.63 × 10⁻³⁴ J s)",
+  options: [
+    "7.3 × 10⁻¹⁰ m",
+    "7.3 × 10⁻⁸ m",
+    "6.6 × 10⁻¹⁰ m",
+    "1.2 × 10⁻⁹ m"
+  ],
+  correctAnswer: 0,
+  explanation: "Using de Broglie's equation: λ = h / (mv) = (6.63 × 10⁻³⁴) / (9.11 × 10⁻³¹ × 1.0 × 10⁶) = (6.63 × 10⁻³⁴) / (9.11 × 10⁻²⁵) = 7.28 × 10⁻¹⁰ m ≈ 7.3 × 10⁻¹⁰ m. This is approximately 0.73 nm, comparable to the spacing between atoms in a crystal lattice, which is why electrons can be diffracted by crystals — confirming their wave-like nature."
+},
+{
+  id: 132,
+  topic: "Quantum Physics",
+  difficulty: "Intermediate",
+  question: "The work function of sodium is 2.3 eV. What is the threshold frequency for the photoelectric effect from a sodium surface? (h = 6.63 × 10⁻³⁴ J s, 1 eV = 1.60 × 10⁻¹⁹ J)",
+  options: [
+    "3.5 × 10¹⁴ Hz",
+    "5.6 × 10¹⁴ Hz",
+    "9.2 × 10¹⁴ Hz",
+    "1.4 × 10¹⁵ Hz"
+  ],
+  correctAnswer: 1,
+  explanation: "At the threshold frequency, the photon energy exactly equals the work function: hf₀ = φ. First convert the work function to joules: φ = 2.3 × 1.60 × 10⁻¹⁹ = 3.68 × 10⁻¹⁹ J. Then: f₀ = φ/h = (3.68 × 10⁻¹⁹) / (6.63 × 10⁻³⁴) = 5.55 × 10¹⁴ Hz ≈ 5.6 × 10¹⁴ Hz. This corresponds to a wavelength of about 540 nm (green light), meaning visible light of shorter wavelength (higher frequency) can cause photoemission from sodium."
+},
+{
+  id: 133,
+  topic: "Quantum Physics",
+  difficulty: "Advanced",
+  question: "A photon of wavelength 200 nm strikes a metal surface with a work function of 3.0 eV. What is the maximum kinetic energy of the emitted photoelectron? (h = 6.63 × 10⁻³⁴ J s, c = 3.0 × 10⁸ m s⁻¹, 1 eV = 1.60 × 10⁻¹⁹ J)",
+  options: [
+    "1.2 eV",
+    "2.2 eV",
+    "3.2 eV",
+    "6.2 eV"
+  ],
+  correctAnswer: 2,
+  explanation: "First find the photon energy: E = hc/λ = (6.63 × 10⁻³⁴ × 3.0 × 10⁸) / (200 × 10⁻⁹) = (1.989 × 10⁻²⁵) / (2.0 × 10⁻⁷) = 9.945 × 10⁻¹⁹ J. Converting to eV: 9.945 × 10⁻¹⁹ / 1.60 × 10⁻¹⁹ = 6.22 eV. Using Einstein's photoelectric equation: KE_max = hf − φ = 6.22 − 3.0 = 3.2 eV. This is the maximum kinetic energy; some photoelectrons will have less KE if they lose energy through collisions before escaping the surface."
+},
+{
+  id: 134,
+  topic: "Quantum Physics",
+  difficulty: "Advanced",
+  question: "A hydrogen atom emits a photon when its electron transitions from the n = 3 energy level to the n = 2 energy level (first line of the Balmer series). What colour of visible light does this correspond to?",
+  options: [
+    "Violet (approximately 410 nm)",
+    "Blue-green (approximately 486 nm)",
+    "Red (approximately 656 nm)",
+    "This transition produces ultraviolet light, not visible light"
+  ],
+  correctAnswer: 2,
+  explanation: "The n = 3 → n = 2 transition is the first (longest wavelength) line of the Balmer series. Using the energy levels of hydrogen: E₃ = −13.6/9 = −1.51 eV and E₂ = −13.6/4 = −3.40 eV. The photon energy is ΔE = −1.51 − (−3.40) = 1.89 eV. The wavelength is λ = hc/ΔE = (6.63 × 10⁻³⁴ × 3.0 × 10⁸) / (1.89 × 1.60 × 10⁻¹⁹) = 656 nm, which is red light. This is the Hα (H-alpha) line, one of the most important spectral lines in astronomy."
+},
+{
+  id: 135,
+  topic: "Quantum Physics",
+  difficulty: "Advanced",
+  question: "The Heisenberg uncertainty principle places a fundamental limit on how precisely certain pairs of physical properties can be simultaneously known. For position (Δx) and momentum (Δp), what is the minimum product ΔxΔp?",
+  options: [
+    "Exactly zero, if instruments are precise enough",
+    "h (Planck's constant)",
+    "ℏ/2 (reduced Planck's constant divided by 2)",
+    "h/2 (Planck's constant divided by 2)"
+  ],
+  correctAnswer: 2,
+  explanation: "The Heisenberg uncertainty principle states that ΔxΔp ≥ ℏ/2, where ℏ = h/(2π) = 1.055 × 10⁻³⁴ J s is the reduced Planck's constant (h-bar). This is not a limitation of measurement technology but a fundamental property of quantum mechanics arising from the wave nature of matter. The more precisely the position of a particle is determined (smaller Δx), the less precisely its momentum can be known (larger Δp), and vice versa. Similar uncertainty relations exist for other conjugate pairs, such as energy and time: ΔEΔt ≥ ℏ/2."
+}
+    ];
+
+    const questionBank = questions;
+
+    // =========================================================================
+    // TOPIC METADATA
+    // =========================================================================
+    const topicMetadata = {
+      "Kinematics": { examWeight: 8, dependencyScore: 9, tier: "foundation" },
+      "Forces": { examWeight: 9, dependencyScore: 10, tier: "foundation" },
+      "Energy": { examWeight: 9, dependencyScore: 8, tier: "foundation" },
+      "Momentum": { examWeight: 7, dependencyScore: 7, tier: "foundation" },
+      "Circular Motion": { examWeight: 6, dependencyScore: 5, tier: "foundation" },
+      "Materials": { examWeight: 6, dependencyScore: 4, tier: "foundation" },
+      "Waves": { examWeight: 9, dependencyScore: 7, tier: "foundation" },
+      "Thermal Physics": { examWeight: 7, dependencyScore: 6, tier: "foundation" },
+      "Gravitational Fields": { examWeight: 7, dependencyScore: 6, tier: "foundation" },
+      "Electric Fields": { examWeight: 8, dependencyScore: 7, tier: "foundation" },
+      "Magnetic Fields": { examWeight: 7, dependencyScore: 5, tier: "foundation" },
+      "Particles and Radiation": { examWeight: 7, dependencyScore: 5, tier: "foundation" },
+      "Electricity": { examWeight: 9, dependencyScore: 9, tier: "foundation" },
+      "Simple Harmonic Motion": { examWeight: 8, dependencyScore: 6, tier: "advanced" },
+      "Astrophysics": { examWeight: 7, dependencyScore: 3, tier: "advanced" },
+      "Medical Physics": { examWeight: 6, dependencyScore: 3, tier: "advanced" },
+      "Nuclear Physics": { examWeight: 7, dependencyScore: 5, tier: "advanced" },
+      "Alternating Current": { examWeight: 6, dependencyScore: 4, tier: "advanced" },
+      "Further Mechanics": { examWeight: 5, dependencyScore: 4, tier: "advanced" },
+      "Optics": { examWeight: 6, dependencyScore: 3, tier: "advanced" },
+      "Quantum Physics": { examWeight: 7, dependencyScore: 5, tier: "advanced" }
+    };
+
+    // =========================================================================
+    // TOPIC DEPENDENCIES
+    // =========================================================================
+    const dependencies = {
+      "Kinematics": [],
+      "Forces": ["Kinematics"],
+      "Energy": ["Forces"],
+      "Momentum": ["Forces"],
+      "Circular Motion": ["Forces", "Kinematics"],
+      "Materials": ["Forces"],
+      "Waves": [],
+      "Thermal Physics": ["Energy"],
+      "Gravitational Fields": ["Forces", "Circular Motion"],
+      "Electric Fields": ["Forces", "Electricity"],
+      "Magnetic Fields": ["Forces", "Electric Fields"],
+      "Particles and Radiation": [],
+      "Electricity": ["Energy"],
+      "Simple Harmonic Motion": ["Circular Motion", "Energy"],
+      "Astrophysics": ["Gravitational Fields", "Waves"],
+      "Medical Physics": ["Waves", "Nuclear Physics"],
+      "Nuclear Physics": ["Particles and Radiation", "Energy"],
+      "Alternating Current": ["Electric Fields", "Magnetic Fields"],
+      "Further Mechanics": ["Forces", "Circular Motion"],
+      "Optics": ["Waves"],
+      "Quantum Physics": ["Particles and Radiation", "Waves"]
+    };
+
+    // =========================================================================
+    // TOPIC COLORS
+    // =========================================================================
+    const topicColors = {
+      "Kinematics": "#3182ce",
+      "Forces": "#e53e3e",
+      "Energy": "#38a169",
+      "Momentum": "#d69e2e",
+      "Circular Motion": "#805ad5",
+      "Materials": "#dd6b20",
+      "Waves": "#319795",
+      "Thermal Physics": "#b83280",
+      "Gravitational Fields": "#2b6cb0",
+      "Electric Fields": "#d69e2e",
+      "Magnetic Fields": "#805ad5",
+      "Particles and Radiation": "#38a169",
+      "Electricity": "#e53e3e",
+      "Simple Harmonic Motion": "#2c7a7b",
+      "Astrophysics": "#553c9a",
+      "Medical Physics": "#b7791f",
+      "Nuclear Physics": "#c53030",
+      "Alternating Current": "#2b6cb0",
+      "Further Mechanics": "#9b2c2c",
+      "Optics": "#285e61",
+      "Quantum Physics": "#6b46c1"
+    };
+
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+    function calculateTopicScores(answers) {
+      const topics = {};
+      questionBank.forEach((q) => {
+        if (!topics[q.topic]) topics[q.topic] = { correct: 0, total: 0 };
+        topics[q.topic].total += 1;
+        if (answers[q.id] === q.correctAnswer) topics[q.topic].correct += 1;
+      });
+      return topics;
+    }
+
+    function getPerformanceCategory(percentage) {
+      if (percentage < 60) return { label: "URGENT", color: "#e53e3e", bg: "#fff5f5" };
+      if (percentage <= 80) return { label: "REVIEW", color: "#d69e2e", bg: "#fffff0" };
+      return { label: "CONFIDENT", color: "#38a169", bg: "#f0fff4" };
+    }
+
+    function calculatePriorityScore(topic, percentage) {
+      const meta = topicMetadata[topic];
+      const performanceGap = (100 - percentage) / 10;
+      return (meta.examWeight * 0.4) + (performanceGap * 0.4) + (meta.dependencyScore * 0.2);
+    }
+
+    function getScoreColor(pct) {
+      if (pct >= 80) return "#38a169";
+      if (pct >= 60) return "#d69e2e";
+      return "#e53e3e";
+    }
+
+    // =========================================================================
+    // WELCOME SCREEN
+    // =========================================================================
+    function WelcomeScreen({ onStart }) {
+      const [name, setName] = useState("");
+
+      return (
+        <div className="welcome-screen">
+          <div className="welcome-card">
+            <h1>AQA A-Level Physics</h1>
+            <div className="subtitle">Higher Tier Diagnostic Assessment</div>
+            <p className="description">
+              This comprehensive diagnostic covers 21 topics across the full AQA A-Level Physics specification
+              (Sections 3.1\u20133.8 plus optional topics). It includes both Foundation and Advanced level content.
+              Your results will identify strengths and weaknesses with a personalised revision plan.
+            </p>
+            <div className="info-box">
+              <p><strong>{questionBank.length} questions</strong> across 21 topics</p>
+              <p><strong>Foundation + Advanced</strong> content included</p>
+              <p><strong>No time limit</strong> \u2014 work at your own pace</p>
+              <p><strong>Detailed PDF report</strong> with prioritised revision guidance</p>
+            </div>
+            <input
+              className="name-input"
+              type="text"
+              placeholder="Enter your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && name.trim()) onStart(name.trim()); }}
+            />
+            <button
+              className="btn btn-primary"
+              disabled={!name.trim()}
+              onClick={() => onStart(name.trim())}
+              style={{ width: "100%" }}
+            >
+              Start Assessment
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // QUIZ SCREEN
+    // =========================================================================
+    function QuizScreen({ studentName, onSubmit }) {
+      const [currentQ, setCurrentQ] = useState(0);
+      const [answers, setAnswers] = useState({});
+      const [showGrid, setShowGrid] = useState(false);
+
+      const question = questionBank[currentQ];
+      const totalQ = questionBank.length;
+      const answeredCount = Object.keys(answers).length;
+      const allAnswered = answeredCount === totalQ;
+      const progressPct = (answeredCount / totalQ) * 100;
+
+      const selectOption = (index) => {
+        setAnswers((prev) => ({ ...prev, [question.id]: index }));
+      };
+
+      const goTo = (idx) => {
+        if (idx >= 0 && idx < totalQ) setCurrentQ(idx);
+      };
+
+      const diffBadgeClass = question.difficulty === "Basic" ? "badge-basic" :
+        question.difficulty === "Intermediate" ? "badge-intermediate" : "badge-advanced";
+
+      return (
+        <div>
+          <div className="quiz-header">
+            <div className="progress-info">
+              <span>Question {currentQ + 1} of {totalQ}</span>
+              <span>{answeredCount}/{totalQ} answered ({Math.round(progressPct)}%)</span>
+            </div>
+            <div className="progress-bar-track">
+              <div className="progress-bar-fill" style={{ width: progressPct + "%" }} />
+            </div>
+          </div>
+
+          <div className="question-grid-toggle">
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowGrid(!showGrid)}
+              style={{ fontSize: "14px", padding: "8px 16px" }}
+            >
+              {showGrid ? "Hide" : "Show"} Question Navigator
+            </button>
+          </div>
+
+          {showGrid && (
+            <div className="question-grid">
+              {questionBank.map((q, idx) => (
+                <button
+                  key={q.id}
+                  className={"grid-item" +
+                    (answers[q.id] !== undefined ? " answered" : "") +
+                    (idx === currentQ ? " current" : "")}
+                  onClick={() => setCurrentQ(idx)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="quiz-card">
+            <div className="question-meta">
+              <span className="badge badge-topic" style={{
+                background: (topicColors[question.topic] || "#2b6cb0") + "18",
+                color: topicColors[question.topic] || "#2b6cb0"
+              }}>
+                {question.topic}
+              </span>
+              <span className={"badge " + diffBadgeClass}>{question.difficulty}</span>
+              {topicMetadata[question.topic] && topicMetadata[question.topic].tier === "advanced" && (
+                <span className="badge" style={{ background: "#faf5ff", color: "#805ad5" }}>A-Level Only</span>
+              )}
+            </div>
+            <div className="question-number">Question {currentQ + 1}</div>
+            <div className="question-text">{question.question}</div>
+            <div className="options-list">
+              {question.options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  className={"option-btn" + (answers[question.id] === idx ? " selected" : "")}
+                  onClick={() => selectOption(idx)}
+                >
+                  <span className="option-letter">{String.fromCharCode(65 + idx)}</span>
+                  <span>{opt}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="quiz-nav">
+            <button className="btn btn-secondary" disabled={currentQ === 0} onClick={() => goTo(currentQ - 1)}>
+              Previous
+            </button>
+            {currentQ < totalQ - 1 ? (
+              <button className="btn btn-primary" onClick={() => goTo(currentQ + 1)}>
+                Next
+              </button>
+            ) : (
+              <button
+                className="btn btn-success"
+                disabled={!allAnswered}
+                onClick={() => onSubmit(answers)}
+                title={allAnswered ? "Submit your assessment" : "Answer all questions before submitting"}
+              >
+                Submit Assessment {!allAnswered ? "(" + (totalQ - answeredCount) + " remaining)" : ""}
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // RESULTS SCREEN
+    // =========================================================================
+    function ResultsScreen({ studentName, answers, onRetake }) {
+      let totalCorrect = 0;
+      questionBank.forEach((q) => { if (answers[q.id] === q.correctAnswer) totalCorrect++; });
+      const overallPct = Math.round((totalCorrect / questionBank.length) * 100);
+
+      // Foundation vs Advanced breakdown
+      let foundCorrect = 0, foundTotal = 0, advCorrect = 0, advTotal = 0;
+      questionBank.forEach((q) => {
+        const tier = topicMetadata[q.topic] ? topicMetadata[q.topic].tier : "foundation";
+        if (tier === "advanced") {
+          advTotal++;
+          if (answers[q.id] === q.correctAnswer) advCorrect++;
+        } else {
+          foundTotal++;
+          if (answers[q.id] === q.correctAnswer) foundCorrect++;
+        }
+      });
+
+      const topicScores = calculateTopicScores(answers);
+      const topicData = Object.entries(topicScores).map(([topic, data]) => {
+        const pct = Math.round((data.correct / data.total) * 100);
+        const priority = calculatePriorityScore(topic, pct);
+        const category = getPerformanceCategory(pct);
+        const tier = topicMetadata[topic] ? topicMetadata[topic].tier : "foundation";
+        return { topic, correct: data.correct, total: data.total, pct, priority, category, tier };
+      });
+      topicData.sort((a, b) => b.priority - a.priority);
+
+      const urgentCount = topicData.filter((t) => t.category.label === "URGENT").length;
+      const reviewCount = topicData.filter((t) => t.category.label === "REVIEW").length;
+      const confidentCount = topicData.filter((t) => t.category.label === "CONFIDENT").length;
+      const weakest5 = topicData.slice(0, 5);
+
+      let assessmentText = "";
+      let assessmentColor = "";
+      if (overallPct >= 80) {
+        assessmentText = "Strong overall performance. Focus on maintaining knowledge and tackling advanced problems.";
+        assessmentColor = "#38a169";
+      } else if (overallPct >= 60) {
+        assessmentText = "Satisfactory foundation with clear areas for improvement. A focused revision plan will raise your grade.";
+        assessmentColor = "#d69e2e";
+      } else {
+        assessmentText = "Significant gaps identified across core topics. Prioritised, structured revision is strongly recommended.";
+        assessmentColor = "#e53e3e";
+      }
+
+      // PDF Generation
+      const generatePDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const pageW = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        const contentW = pageW - 2 * margin;
+        const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+        // PAGE 1: Executive Summary
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 45, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text("AQA A-Level Physics", margin, 22);
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "normal");
+        doc.text("Higher Tier Diagnostic Report", margin, 34);
+
+        doc.setTextColor(0, 0, 0);
+        let y = 60;
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Student:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(studentName, margin + 30, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Date:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(today, margin + 30, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Overall:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(totalCorrect + " / " + questionBank.length + " (" + overallPct + "%)", margin + 30, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Foundation:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(foundCorrect + " / " + foundTotal + " (" + Math.round((foundCorrect/foundTotal)*100) + "%)", margin + 38, y);
+        y += 8;
+        doc.setFont("helvetica", "bold");
+        doc.text("Advanced:", margin, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(advCorrect + " / " + advTotal + " (" + Math.round((advCorrect/advTotal)*100) + "%)", margin + 38, y);
+        y += 16;
+
+        // Score bar
+        doc.setFillColor(226, 232, 240);
+        doc.roundedRect(margin, y, contentW, 10, 2, 2, "F");
+        const barColor = overallPct >= 80 ? [56, 161, 105] : overallPct >= 60 ? [214, 158, 46] : [229, 62, 62];
+        doc.setFillColor(...barColor);
+        doc.roundedRect(margin, y, contentW * (overallPct / 100), 10, 2, 2, "F");
+        y += 20;
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "italic");
+        doc.text(assessmentText, margin, y, { maxWidth: contentW });
+        y += 20;
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(13);
+        doc.text("Performance Overview", margin, y);
+        y += 10;
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(229, 62, 62);
+        doc.text("URGENT (< 60%): " + urgentCount + " topic" + (urgentCount !== 1 ? "s" : ""), margin, y);
+        y += 7;
+        doc.setTextColor(214, 158, 46);
+        doc.text("REVIEW (60-80%): " + reviewCount + " topic" + (reviewCount !== 1 ? "s" : ""), margin, y);
+        y += 7;
+        doc.setTextColor(56, 161, 105);
+        doc.text("CONFIDENT (> 80%): " + confidentCount + " topic" + (confidentCount !== 1 ? "s" : ""), margin, y);
+        doc.setTextColor(0, 0, 0);
+
+        // PAGE 2: Topic Breakdown Table
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Topic Breakdown", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        const tableData = topicData.map((t, idx) => [
+          idx + 1,
+          t.topic,
+          t.tier === "advanced" ? "ADV" : "FND",
+          t.correct + " / " + t.total,
+          t.pct + "%",
+          topicMetadata[t.topic].examWeight + " / 10",
+          t.category.label
+        ]);
+
+        doc.autoTable({
+          startY: 40,
+          head: [["#", "Topic", "Tier", "Score", "%", "Exam Wt.", "Status"]],
+          body: tableData,
+          margin: { left: margin, right: margin },
+          styles: { fontSize: 9, cellPadding: 3 },
+          headStyles: { fillColor: [26, 54, 93], textColor: [255, 255, 255], fontStyle: "bold" },
+          columnStyles: {
+            0: { cellWidth: 10, halign: "center" },
+            2: { cellWidth: 14, halign: "center" },
+            3: { halign: "center" },
+            4: { halign: "center" },
+            5: { halign: "center" },
+            6: { halign: "center", fontStyle: "bold" }
+          },
+          didParseCell: function (data) {
+            if (data.column.index === 6 && data.section === "body") {
+              const val = data.cell.raw;
+              if (val === "URGENT") data.cell.styles.textColor = [229, 62, 62];
+              else if (val === "REVIEW") data.cell.styles.textColor = [214, 158, 46];
+              else if (val === "CONFIDENT") data.cell.styles.textColor = [56, 161, 105];
+            }
+          }
+        });
+
+        // PAGE 3: Detailed Guidance
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Detailed Revision Guidance", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        y = 40;
+        topicData.forEach((t) => {
+          if (y > 260) { doc.addPage(); y = 20; }
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "bold");
+          doc.text(t.topic + " \u2014 " + t.correct + "/" + t.total + " (" + t.pct + "%)", margin, y);
+          y += 7;
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+
+          let advice = "";
+          const deps = dependencies[t.topic] || [];
+          const depsText = deps.length > 0 ? " This topic builds on: " + deps.join(", ") + "." : "";
+          if (t.category.label === "URGENT") {
+            advice = "URGENT: Return to the fundamentals of " + t.topic + ". Work through textbook examples, watch explanatory videos, and attempt basic practice questions before progressing to exam-style problems." + depsText;
+          } else if (t.category.label === "REVIEW") {
+            advice = "REVIEW: Consolidate your understanding of " + t.topic + ". Focus on areas where marks were dropped, practise applying concepts to unfamiliar contexts, and complete past paper questions on this topic." + depsText;
+          } else {
+            advice = "CONFIDENT: Maintain your strong performance in " + t.topic + ". Challenge yourself with multi-step and synoptic questions. Aim for full marks in exam conditions.";
+          }
+          const lines = doc.splitTextToSize(advice, contentW);
+          doc.text(lines, margin, y);
+          y += lines.length * 5 + 8;
+        });
+
+        // PAGE 4: 4-Week Action Plan
+        doc.addPage();
+        doc.setFillColor(26, 54, 93);
+        doc.rect(0, 0, pageW, 30, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("4-Week Revision Action Plan", margin, 20);
+        doc.setTextColor(0, 0, 0);
+
+        y = 42;
+        const urgentTopics = topicData.filter((t) => t.category.label === "URGENT").map((t) => t.topic);
+        const reviewTopics = topicData.filter((t) => t.category.label === "REVIEW").map((t) => t.topic);
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(229, 62, 62);
+        doc.text("Weeks 1-2: Address Urgent Topics", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        if (urgentTopics.length > 0) {
+          urgentTopics.forEach((t) => { doc.text("\u2022  " + t, margin + 4, y); y += 6; });
+        } else {
+          doc.text("No urgent topics \u2014 well done!", margin + 4, y); y += 6;
+        }
+        const w12Lines = doc.splitTextToSize(
+          "Focus on rebuilding core understanding. Use textbook worked examples, visual aids, and online tutorials. Aim for 30-45 minutes of focused study per topic per day.",
+          contentW - 8
+        );
+        y += 2;
+        doc.text(w12Lines, margin + 4, y);
+        y += w12Lines.length * 5 + 12;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(214, 158, 46);
+        doc.text("Weeks 3-4: Consolidate Review Topics", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        if (reviewTopics.length > 0) {
+          reviewTopics.forEach((t) => { doc.text("\u2022  " + t, margin + 4, y); y += 6; });
+        } else {
+          doc.text("No review topics identified.", margin + 4, y); y += 6;
+        }
+        const w34Lines = doc.splitTextToSize(
+          "Work through past paper questions and mark schemes. Identify common errors and misunderstandings. Practise under timed conditions to build exam technique and speed.",
+          contentW - 8
+        );
+        y += 2;
+        doc.text(w34Lines, margin + 4, y);
+        y += w34Lines.length * 5 + 12;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(56, 161, 105);
+        doc.text("Week 5+: Full Practice Papers & Refinement", margin, y);
+        doc.setTextColor(0, 0, 0);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        const w5Lines = doc.splitTextToSize(
+          "Attempt full past papers under exam conditions. Review your answers against mark schemes, paying attention to command words and required depth of explanation. Focus on synoptic links between topics and multi-step calculations.",
+          contentW - 8
+        );
+        doc.text(w5Lines, margin + 4, y);
+        y += w5Lines.length * 5 + 14;
+
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.text("General Study Tips", margin, y);
+        y += 8;
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        const tips = [
+          "Use active recall and spaced repetition to strengthen long-term memory.",
+          "Create concept maps linking related topics (e.g., Forces \u2192 Energy \u2192 Momentum).",
+          "Practise calculations with full working, including units at every step.",
+          "Review the AQA specification checklist to ensure complete coverage.",
+          "Form study groups to explain concepts to peers \u2014 teaching deepens understanding.",
+          "Consult your teacher for targeted support on persistent problem areas."
+        ];
+        tips.forEach((tip) => {
+          if (y > 270) { doc.addPage(); y = 20; }
+          doc.text("\u2022  " + tip, margin + 4, y);
+          y += 7;
+        });
+
+        // Footer on each page
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(160, 174, 192);
+          doc.text("AQA A-Level Physics Higher Tier Diagnostic | Generated " + today, margin, 290);
+          doc.text("Page " + i + " of " + totalPages, pageW - margin - 25, 290);
+        }
+
+        doc.save("AQA_Physics_Higher_Diagnostic_" + studentName.replace(/\s+/g, "_") + ".pdf");
+      };
+
+      return (
+        <div className="results-screen">
+          <div className="results-header">
+            <h1>Assessment Complete</h1>
+            <p style={{ color: "#718096" }}>Results for {studentName}</p>
+          </div>
+
+          <div className="score-display">
+            <div className="score-big" style={{ color: getScoreColor(overallPct) }}>{overallPct}%</div>
+            <div className="score-label">{totalCorrect} out of {questionBank.length} correct</div>
+            <div className="score-bar-container">
+              <div className="score-bar-fill" style={{ width: overallPct + "%", background: getScoreColor(overallPct) }} />
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: "24px", margin: "12px 0" }}>
+              <span style={{ fontSize: "14px", color: "#4a5568" }}>Foundation: {foundCorrect}/{foundTotal} ({Math.round((foundCorrect/foundTotal)*100)}%)</span>
+              <span style={{ fontSize: "14px", color: "#805ad5" }}>Advanced: {advCorrect}/{advTotal} ({Math.round((advCorrect/advTotal)*100)}%)</span>
+            </div>
+            <div className="score-assessment" style={{ background: getScoreColor(overallPct) + "18", color: getScoreColor(overallPct) }}>
+              {assessmentText}
+            </div>
+          </div>
+
+          <div className="category-summary">
+            <div className="category-card">
+              <div className="count" style={{ color: "#e53e3e" }}>{urgentCount}</div>
+              <div className="label" style={{ color: "#e53e3e" }}>Urgent</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>Below 60%</div>
+            </div>
+            <div className="category-card">
+              <div className="count" style={{ color: "#d69e2e" }}>{reviewCount}</div>
+              <div className="label" style={{ color: "#d69e2e" }}>Review</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>60% - 80%</div>
+            </div>
+            <div className="category-card">
+              <div className="count" style={{ color: "#38a169" }}>{confidentCount}</div>
+              <div className="label" style={{ color: "#38a169" }}>Confident</div>
+              <div style={{ fontSize: "12px", color: "#a0aec0", marginTop: "4px" }}>Above 80%</div>
+            </div>
+          </div>
+
+          <div className="topic-results">
+            <h2>Top 5 Priority Topics</h2>
+            {weakest5.map((t) => (
+              <div className="topic-bar-item" key={t.topic}>
+                <div className="topic-bar-label">
+                  <span className="topic-bar-name">
+                    {t.topic}
+                    <span className={"status-badge status-" + t.category.label.toLowerCase()} style={{ marginLeft: "10px" }}>
+                      {t.category.label}
+                    </span>
+                    {t.tier === "advanced" && (
+                      <span style={{ marginLeft: "6px", fontSize: "11px", color: "#805ad5", fontWeight: 600 }}>ADV</span>
+                    )}
+                  </span>
+                  <span className="topic-bar-score">{t.correct}/{t.total} ({t.pct}%)</span>
+                </div>
+                <div className="topic-bar-track">
+                  <div className="topic-bar-fill" style={{ width: t.pct + "%", background: t.category.color }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="topic-results">
+            <h2>All Topics (Ranked by Priority)</h2>
+            {topicData.map((t) => (
+              <div className="topic-bar-item" key={t.topic}>
+                <div className="topic-bar-label">
+                  <span className="topic-bar-name">
+                    {t.topic}
+                    <span className={"status-badge status-" + t.category.label.toLowerCase()} style={{ marginLeft: "10px" }}>
+                      {t.category.label}
+                    </span>
+                    {t.tier === "advanced" && (
+                      <span style={{ marginLeft: "6px", fontSize: "11px", color: "#805ad5", fontWeight: 600 }}>ADV</span>
+                    )}
+                  </span>
+                  <span className="topic-bar-score">{t.correct}/{t.total} ({t.pct}%)</span>
+                </div>
+                <div className="topic-bar-track">
+                  <div className="topic-bar-fill" style={{ width: t.pct + "%", background: t.category.color }} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="results-actions">
+            <button className="btn btn-primary" onClick={generatePDF}>Download PDF Report</button>
+            <button className="btn btn-secondary" onClick={onRetake}>Retake Assessment</button>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // APP COMPONENT
+    // =========================================================================
+    function App() {
+      const [screen, setScreen] = useState("welcome");
+      const [studentName, setStudentName] = useState("");
+      const [answers, setAnswers] = useState({});
+
+      const handleStart = (name) => { setStudentName(name); setScreen("quiz"); };
+      const handleSubmit = (ans) => { setAnswers(ans); setScreen("results"); window.scrollTo(0, 0); };
+      const handleRetake = () => { setAnswers({}); setScreen("quiz"); window.scrollTo(0, 0); };
+
+      return (
+        <div className="app-container">
+          {screen === "welcome" && <WelcomeScreen onStart={handleStart} />}
+          {screen === "quiz" && <QuizScreen studentName={studentName} onSubmit={handleSubmit} />}
+          {screen === "results" && <ResultsScreen studentName={studentName} answers={answers} onRetake={handleRetake} />}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+</html>
